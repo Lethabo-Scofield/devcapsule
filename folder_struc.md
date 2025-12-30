@@ -1,0 +1,15 @@
+app/
+  page.tsx
+  components/
+    Navigation.tsx
+    UploadPhase.tsx
+    LoadingPhase.tsx
+    ResultsPhase.tsx
+    tabs/
+      OverviewTab.tsx
+      AnatomyTab.tsx
+      SecurityTab.tsx
+  agents/
+    agents.tsx
+  lib/
+    clipboard.ts
