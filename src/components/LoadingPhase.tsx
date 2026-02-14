@@ -4,19 +4,24 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AGENTS } from "@/agents/agents";
 
-export default function LoadingPhase({ activeAgentIdx }: any) {
+type Props = {
+    activeAgentIdx: number;
+    logsFromBackend?: string[]; // Optional: can push backend logs dynamically
+};
+
+export default function LoadingPhase({ activeAgentIdx, logsFromBackend }: Props) {
     const [logs, setLogs] = useState<string[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
 
+    const agent = AGENTS[activeAgentIdx];
+
+    // Add log for current agent whenever it changes
     useEffect(() => {
-        if (!AGENTS[activeAgentIdx]) return;
+        if (!agent) return;
 
-        const agent = AGENTS[activeAgentIdx];
         const message = `>> ${agent.name}: querying ${agent.desc.toLowerCase()}...`;
-
         setLogs((prev) => [...prev, message]);
 
-        // Auto-scroll to latest log
         const timer = setTimeout(() => {
             containerRef.current?.scrollTo({
                 top: containerRef.current.scrollHeight,
@@ -25,7 +30,22 @@ export default function LoadingPhase({ activeAgentIdx }: any) {
         }, 50);
 
         return () => clearTimeout(timer);
-    }, [activeAgentIdx]);
+    }, [agent]);
+
+    // Append any backend logs dynamically
+    useEffect(() => {
+        if (!logsFromBackend?.length) return;
+        setLogs((prev) => [...prev, ...logsFromBackend]);
+
+        const timer = setTimeout(() => {
+            containerRef.current?.scrollTo({
+                top: containerRef.current.scrollHeight,
+                behavior: "smooth",
+            });
+        }, 50);
+
+        return () => clearTimeout(timer);
+    }, [logsFromBackend]);
 
     return (
         <AnimatePresence>
@@ -34,9 +54,12 @@ export default function LoadingPhase({ activeAgentIdx }: any) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
             >
                 <div className="w-full max-w-xl flex flex-col items-start space-y-4">
-                    <h2 className="text-xl font-semibold text-gray-800 mb-2">Audit in Progress</h2>
+                    <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                        Audit in Progress
+                    </h2>
 
                     <div
                         ref={containerRef}
@@ -44,7 +67,7 @@ export default function LoadingPhase({ activeAgentIdx }: any) {
                     >
                         {logs.map((log, i) => (
                             <motion.div
-                                key={i}
+                                key={`${i}-${log}`}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3 }}
@@ -52,17 +75,15 @@ export default function LoadingPhase({ activeAgentIdx }: any) {
                             >
                                 <span>{log}</span>
                                 {i === logs.length - 1 && (
-                                    <motion.span
-                                        className="w-2 h-2 rounded-full bg-gray-400 animate-pulse"
-                                    />
+                                    <motion.span className="w-2 h-2 rounded-full bg-gray-400 animate-pulse" />
                                 )}
                             </motion.div>
                         ))}
                     </div>
 
                     <div className="text-gray-500 text-sm mt-2">
-                        {AGENTS[activeAgentIdx]
-                            ? `Currently processing: ${AGENTS[activeAgentIdx].name}`
+                        {agent
+                            ? `Currently processing: ${agent.name}`
                             : "Initializing agents..."}
                     </div>
                 </div>

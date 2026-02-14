@@ -20,26 +20,43 @@ export default function Home() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const performScan = async (url: string) => {
+    setError(null);
     setPhase("loading");
     setActiveAgentIdx(0);
-    try {
-      const timer = setInterval(() => {
-        setActiveAgentIdx(v => (v < AGENTS.length - 1 ? v + 1 : v));
-      }, 2500);
 
+    const timer = setInterval(() => {
+      setActiveAgentIdx(v => (v < AGENTS.length - 1 ? v + 1 : v));
+    }, 2500);
+
+    try {
       const res = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ repoUrl: url })
       });
 
-      clearInterval(timer);
       const data = await res.json();
-      setScanResults(JSON.parse(data.content));
+
+      if (!data?.content) {
+        throw new Error("Empty model response");
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(data.content);
+      } catch (e) {
+        console.error("Model returned invalid JSON:", data.content);
+        throw new Error("Invalid JSON from model");
+      }
+
+      setScanResults(parsed);
       setPhase("results");
-    } catch {
+    } catch (e) {
+      console.error("Frontend orchestration error:", e);
       setError("Analysis failed. Multi-agent coordination interrupted.");
-      setPhase("upload");
+      setPhase("results"); // do not revert to upload on backend success
+    } finally {
+      clearInterval(timer);
     }
   };
 
@@ -48,9 +65,18 @@ export default function Home() {
       <Navigation phase={phase} activeTab={activeTab} setActiveTab={setActiveTab} setPhase={setPhase} />
 
       <AnimatePresence mode="wait">
-        {phase === "upload" && <UploadPhase repoUrl={repoUrl} setRepoUrl={setRepoUrl} performScan={performScan} />}
+        {phase === "upload" && (
+          <UploadPhase repoUrl={repoUrl} setRepoUrl={setRepoUrl} performScan={performScan} />
+        )}
         {phase === "loading" && <LoadingPhase activeAgentIdx={activeAgentIdx} />}
-        {phase === "results" && <ResultsPhase activeTab={activeTab} scanResults={scanResults} copiedId={copiedId} setCopiedId={setCopiedId} />}
+        {phase === "results" && (
+          <ResultsPhase
+            activeTab={activeTab}
+            scanResults={scanResults}
+            copiedId={copiedId}
+            setCopiedId={setCopiedId}
+          />
+        )}
       </AnimatePresence>
 
       {error && <p className="text-red-500 text-center mt-6">{error}</p>}

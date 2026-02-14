@@ -7,6 +7,10 @@ export async function POST(req: NextRequest) {
   try {
     const { repoUrl } = await req.json();
 
+    if (!repoUrl) {
+      return NextResponse.json({ error: "Missing repoUrl" }, { status: 400 });
+    }
+
     const systemPrompt = `
       You are the Orchestrator for "Dev Capsule", a multi-agent security and architecture platform.
       Coordinate three agents:
@@ -26,10 +30,11 @@ export async function POST(req: NextRequest) {
     `;
 
     const userQuery = `
-      Analyze repository at ${repoUrl}. 
+      Analyze repository at ${repoUrl}.
       Cross-reference all dependencies with OSV.dev.
       Provide remediation shell commands for vulnerabilities.
       Multi-agent assessment of architecture, security, and DX.
+      Respond ONLY in JSON format as described in the schema.
     `;
 
     const response = await fetch(
@@ -40,17 +45,47 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           contents: [{ parts: [{ text: userQuery }] }],
           systemInstruction: { parts: [{ text: systemPrompt }] },
-          generationConfig: { responseMimeType: "application/json", temperature: 0.1 },
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.1
+          }
         }),
       }
     );
 
     const result = await response.json();
-    const content = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    return NextResponse.json({ content });
+    // Robust extraction: find first text-containing part
+    const parts = result?.candidates?.[0]?.content?.parts;
+    const textPart = parts?.find((p: any) => typeof p.text === "string");
+
+    if (!textPart?.text) {
+      console.error("Gemini raw response:", JSON.stringify(result, null, 2));
+      return NextResponse.json(
+        { error: "Model returned no text output", raw: result },
+        { status: 502 }
+      );
+    }
+
+    // Ensure the JSON is valid before returning
+    let parsed;
+    try {
+      parsed = JSON.parse(textPart.text);
+    } catch (err) {
+      console.error("Failed to parse model JSON:", textPart.text, err);
+      return NextResponse.json(
+        { error: "Model returned invalid JSON", raw: textPart.text },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json({ content: JSON.stringify(parsed) });
+
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to fetch model response" }, { status: 500 });
+    console.error("API route failure:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch model response" },
+      { status: 500 }
+    );
   }
 }
