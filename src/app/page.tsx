@@ -13,13 +13,13 @@ type Phase = "upload" | "loading" | "results";
 export default function Home() {
   const [phase, setPhase] = useState<Phase>("upload");
   const [activeTab, setActiveTab] = useState("overview");
-  const [repoUrl, setRepoUrl] = useState("");
+  const [repoUrl, setRepoUrl] = useState<string>("");
   const [scanResults, setScanResults] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeAgentIdx, setActiveAgentIdx] = useState(0);
+  const [activeAgentIdx, setActiveAgentIdx] = useState<number>(0);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const performScan = async (url: string) => {
+  const performScan = async (url: string, file: File | null = null) => {
     setError(null);
     setPhase("loading");
     setActiveAgentIdx(0);
@@ -29,10 +29,14 @@ export default function Home() {
     }, 2500);
 
     try {
+      const body = file
+        ? { fileName: file.name }
+        : { repoUrl: url };
+
       const res = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ repoUrl: url })
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
@@ -62,11 +66,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#FBFBFD]">
-      <Navigation phase={phase} activeTab={activeTab} setActiveTab={setActiveTab} setPhase={setPhase} />
+      <Navigation
+        phase={phase}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        setPhase={setPhase}
+      />
 
       <AnimatePresence mode="wait">
         {phase === "upload" && (
-          <UploadPhase repoUrl={repoUrl} setRepoUrl={setRepoUrl} performScan={performScan} />
+          <UploadPhase
+            repoUrl={repoUrl}
+            setRepoUrl={setRepoUrl}
+            performScan={performScan}
+          />
         )}
         {phase === "loading" && <LoadingPhase activeAgentIdx={activeAgentIdx} />}
         {phase === "results" && (
