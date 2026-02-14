@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Github, UploadCloud, Target, Users, Star, Terminal } from "lucide-react";
-import { useState, ChangeEvent } from "react";
+import { Github, UploadCloud, Target, Users, Star, Terminal, Play, Pause } from "lucide-react";
+import { useState, ChangeEvent, useRef } from "react";
 
 interface DevCapsuleLandingProps {
   performScan: (repoUrl: string, file: File | null) => void;
@@ -66,14 +66,25 @@ const CTAButton = ({
   </a>
 );
 
-export default function DevCapsuleLanding({
-  performScan,
-  securityScore,
-}: DevCapsuleLandingProps) {
+export default function DevCapsuleLanding({ performScan, securityScore }: DevCapsuleLandingProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("repo");
   const [repoUrl, setRepoUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
+
+  // Video state
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
 
   const tabs: { key: TabKey; icon: JSX.Element; label: string }[] = [
     { key: "repo", icon: <Github size={16} />, label: "Repo" },
@@ -139,9 +150,7 @@ export default function DevCapsuleLanding({
                 <Github className="text-gray-300 shrink-0" />
                 <input
                   value={repoUrl}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setRepoUrl(e.target.value)
-                  }
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setRepoUrl(e.target.value)}
                   placeholder="github.com/username/repo"
                   className="flex-1 bg-transparent outline-none text-base sm:text-lg text-white placeholder-gray-400"
                 />
@@ -169,29 +178,20 @@ export default function DevCapsuleLanding({
                   setDragging(false);
                   setFile(e.dataTransfer.files[0]);
                 }}
-                className={`w-full max-w-2xl rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center transition-all border-2 border-dashed ${dragging
-                    ? "border-blue-400 bg-blue-400/10 scale-[1.02]"
-                    : "border-white/30 bg-white/5"
-                  }`}
+                className={`w-full max-w-2xl rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center transition-all border-2 border-dashed ${
+                  dragging ? "border-blue-400 bg-blue-400/10 scale-[1.02]" : "border-white/30 bg-white/5"
+                }`}
                 variants={scaleFade}
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
               >
                 <UploadCloud className="mx-auto mb-3 sm:mb-4 text-white" size={36} />
-                <p className="text-white text-base sm:text-lg font-medium">
-                  Drag and drop your archive
-                </p>
-                <p className="text-xs sm:text-sm text-gray-400 mt-1">
-                  ZIP, TAR, or GZ supported
-                </p>
+                <p className="text-white text-base sm:text-lg font-medium">Drag and drop your archive</p>
+                <p className="text-xs sm:text-sm text-gray-400 mt-1">ZIP, TAR, or GZ supported</p>
 
                 {file && (
-                  <motion.div
-                    className="mt-3 text-sm text-white"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
+                  <motion.div className="mt-3 text-sm text-white" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                     {file.name}
                   </motion.div>
                 )}
@@ -220,18 +220,10 @@ export default function DevCapsuleLanding({
             >
               <Target className="text-blue-400" />
               <div className="flex-1">
-                <div className="text-xs uppercase tracking-widest text-gray-400">
-                  Health Score
-                </div>
-                <div className="text-xl sm:text-2xl font-semibold text-white">
-                  {securityScore}%
-                </div>
+                <div className="text-xs uppercase tracking-widest text-gray-400">Health Score</div>
+                <div className="text-xl sm:text-2xl font-semibold text-white">{securityScore}%</div>
                 <div className="mt-2 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-blue-400"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${securityScore}%` }}
-                  />
+                  <motion.div className="h-full bg-blue-400" initial={{ width: 0 }} animate={{ width: `${securityScore}%` }} />
                 </div>
               </div>
             </motion.div>
@@ -251,26 +243,10 @@ export default function DevCapsuleLanding({
           Why Developers Love Dev Capsule
         </motion.h2>
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-          <FeatureCard
-            icon={<Star className="mx-auto mb-3 text-yellow-400" size={32} />}
-            title="Open-source & Free"
-            description="Completely free for everyone to use and contribute."
-          />
-          <FeatureCard
-            icon={<Terminal className="mx-auto mb-3 text-blue-400" size={32} />}
-            title="Lightweight Setup"
-            description="Run in minutes with minimal dependencies."
-          />
-          <FeatureCard
-            icon={<Users className="mx-auto mb-3 text-green-400" size={32} />}
-            title="Collaborative"
-            description="Track tasks and team progress seamlessly."
-          />
-          <FeatureCard
-            icon={<Github className="mx-auto mb-3 text-purple-400" size={32} />}
-            title="Extensible"
-            description="Plugin-friendly and API-ready for integrations."
-          />
+          <FeatureCard icon={<Star className="mx-auto mb-3 text-yellow-400" size={32} />} title="Open-source & Free" description="Completely free for everyone to use and contribute." />
+          <FeatureCard icon={<Terminal className="mx-auto mb-3 text-blue-400" size={32} />} title="Lightweight Setup" description="Run in minutes with minimal dependencies." />
+          <FeatureCard icon={<Users className="mx-auto mb-3 text-green-400" size={32} />} title="Collaborative" description="Track tasks and team progress seamlessly." />
+          <FeatureCard icon={<Github className="mx-auto mb-3 text-purple-400" size={32} />} title="Extensible" description="Plugin-friendly and API-ready for integrations." />
         </div>
       </section>
 
@@ -285,16 +261,34 @@ export default function DevCapsuleLanding({
         >
           See It In Action
         </motion.h2>
-        <p className="max-w-3xl mx-auto mb-12 text-gray-300">
-          Check how tasks and dashboards come alive in Dev Capsule.
-        </p>
-        <video
-          className="rounded-lg shadow-lg w-full max-w-4xl mx-auto"
-          src="/HowItWorks.mp4"
-          poster="/howitworks-poster.png"
-          controls
-          preload="none"
-        />
+        <p className="max-w-3xl mx-auto mb-12 text-gray-300">Check how tasks and dashboards come alive in Dev Capsule.</p>
+
+        <motion.div
+          className="relative max-w-4xl mx-auto rounded-lg shadow-lg overflow-hidden"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <video
+            ref={videoRef}
+            className="w-full rounded-lg"
+            src="/HowItWorks.mp4"
+            poster="/howitworks-poster.png"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+          />
+          <button
+            onClick={togglePlay}
+            className="absolute bottom-4 right-4 bg-black/50 text-white p-3 rounded-full shadow hover:bg-black/70 transition"
+            aria-label={isPlaying ? "Pause video" : "Play video"}
+          >
+            {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+          </button>
+        </motion.div>
       </section>
 
       {/* -------------------- Community / CTA -------------------- */}
@@ -362,11 +356,21 @@ export default function DevCapsuleLanding({
       {/* -------------------- Footer -------------------- */}
       <footer className="bg-gray-900 text-gray-400 py-8 text-center flex flex-col gap-3">
         <div className="flex justify-center gap-6 flex-wrap">
-          <a href="https://github.com/devcapsule" target="_blank" className="hover:text-white">GitHub</a>
-          <a href="/docs" className="hover:text-white">Documentation</a>
-          <a href="/license" className="hover:text-white">License</a>
-          <a href="https://discord.gg/devcapsule" className="hover:text-white">Discord</a>
-          <a href="https://twitter.com/devcapsule" className="hover:text-white">Twitter</a>
+          <a href="https://github.com/devcapsule" target="_blank" className="hover:text-white">
+            GitHub
+          </a>
+          <a href="/docs" className="hover:text-white">
+            Documentation
+          </a>
+          <a href="/license" className="hover:text-white">
+            License
+          </a>
+          <a href="https://discord.gg/devcapsule" className="hover:text-white">
+            Discord
+          </a>
+          <a href="https://twitter.com/devcapsule" className="hover:text-white">
+            Twitter
+          </a>
         </div>
         <p className="text-sm">&copy; {new Date().getFullYear()} Dev Capsule. All rights reserved.</p>
       </footer>
