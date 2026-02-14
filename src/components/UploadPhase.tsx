@@ -1,21 +1,26 @@
 "use client";
 
+import React, { useState, useRef, ChangeEvent } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Github, UploadCloud, Target, Users, Star, Terminal, Play, Pause } from "lucide-react";
-import { useState, ChangeEvent, useRef } from "react";
 
 interface DevCapsuleLandingProps {
   performScan: (repoUrl: string, file: File | null) => void;
   securityScore?: number;
-  repoUrl: string;
-  setRepoUrl: React.Dispatch<React.SetStateAction<string>>;
 }
 
 type TabKey = "repo" | "file";
 
 // --- Motion Variants ---
-const fadeUp: Variants = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } };
-const scaleFade: Variants = { hidden: { opacity: 0, scale: 0.96 }, visible: { opacity: 1, scale: 1 } };
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const scaleFade: Variants = {
+  hidden: { opacity: 0, scale: 0.96 },
+  visible: { opacity: 1, scale: 1 },
+};
 
 // --- Reusable Components ---
 const FeatureCard = ({
@@ -23,7 +28,7 @@ const FeatureCard = ({
   title,
   description,
 }: {
-  icon: JSX.Element;
+  icon: React.ReactNode;
   title: string;
   description: string;
 }) => (
@@ -52,22 +57,19 @@ const CTAButton = ({
   <a
     href={href}
     target="_blank"
-    className={`flex items-center gap-2 font-semibold px-8 py-4 rounded-lg shadow-lg transition ${primary
+    className={`flex items-center gap-2 font-semibold px-8 py-4 rounded-lg shadow-lg transition ${
+      primary
         ? "bg-blue-500 text-white hover:shadow-xl"
         : "border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
-      }`}
+    }`}
   >
     {children}
   </a>
 );
 
-export default function DevCapsuleLanding({
-  performScan,
-  securityScore,
-  repoUrl,
-  setRepoUrl,
-}: DevCapsuleLandingProps) {
+export default function DevCapsuleLanding({ performScan, securityScore }: DevCapsuleLandingProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("repo");
+  const [repoUrl, setRepoUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -85,7 +87,7 @@ export default function DevCapsuleLanding({
     }
   };
 
-  const tabs: { key: TabKey; icon: JSX.Element; label: string }[] = [
+  const tabs: { key: TabKey; icon: React.ReactNode; label: string }[] = [
     { key: "repo", icon: <Github size={16} />, label: "Repo" },
     { key: "file", icon: <UploadCloud size={16} />, label: "Upload" },
   ];
@@ -177,8 +179,9 @@ export default function DevCapsuleLanding({
                   setDragging(false);
                   setFile(e.dataTransfer.files[0]);
                 }}
-                className={`w-full max-w-2xl rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center transition-all border-2 border-dashed ${dragging ? "border-blue-400 bg-blue-400/10 scale-[1.02]" : "border-white/30 bg-white/5"
-                  }`}
+                className={`w-full max-w-2xl rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center transition-all border-2 border-dashed ${
+                  dragging ? "border-blue-400 bg-blue-400/10 scale-[1.02]" : "border-white/30 bg-white/5"
+                }`}
                 variants={scaleFade}
                 initial="hidden"
                 animate="visible"
@@ -233,8 +236,165 @@ export default function DevCapsuleLanding({
         </div>
       </motion.div>
 
-      {/* Features, Demo, Community, Technical Details, Footer sections remain the same */}
-      {/* ... You can keep your existing sections below without change ... */}
+      {/* -------------------- Features Section -------------------- */}
+      <section className="py-20 px-6 text-center bg-gray-900">
+        <motion.h2
+          className="text-4xl font-bold mb-12"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          Why Developers Love Dev Capsule
+        </motion.h2>
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+          <FeatureCard
+            icon={<Star className="mx-auto mb-3 text-yellow-400" size={32} />}
+            title="Open-source & Free"
+            description="Completely free for everyone to use and contribute."
+          />
+          <FeatureCard
+            icon={<Terminal className="mx-auto mb-3 text-blue-400" size={32} />}
+            title="Lightweight Setup"
+            description="Run in minutes with minimal dependencies."
+          />
+          <FeatureCard
+            icon={<Users className="mx-auto mb-3 text-green-400" size={32} />}
+            title="Collaborative"
+            description="Track tasks and team progress seamlessly."
+          />
+          <FeatureCard
+            icon={<Github className="mx-auto mb-3 text-purple-400" size={32} />}
+            title="Extensible"
+            description="Plugin-friendly and API-ready for integrations."
+          />
+        </div>
+      </section>
+
+      {/* -------------------- Visuals / Demo -------------------- */}
+      <section className="py-20 px-6 text-center bg-gray-800">
+        <motion.h2
+          className="text-4xl font-bold mb-6"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          See It In Action
+        </motion.h2>
+        <p className="max-w-3xl mx-auto mb-12 text-gray-300">Check how tasks and dashboards come alive in Dev Capsule.</p>
+
+        <motion.div
+          className="relative max-w-4xl mx-auto rounded-lg shadow-lg overflow-hidden"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <video
+            ref={videoRef}
+            className="w-full rounded-lg"
+            src="/HowItWorks.mp4"
+            poster="/howitworks-poster.png"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+          />
+          <button
+            onClick={togglePlay}
+            className="absolute bottom-4 right-4 bg-black/50 text-white p-3 rounded-full shadow hover:bg-black/70 transition"
+            aria-label={isPlaying ? "Pause video" : "Play video"}
+          >
+            {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+          </button>
+        </motion.div>
+      </section>
+
+      {/* -------------------- Community / CTA -------------------- */}
+      <section className="py-20 px-6 text-center bg-gray-800">
+        <motion.h2
+          className="text-4xl font-bold mb-6"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          Join the Dev Capsule Community
+        </motion.h2>
+        <p className="max-w-2xl mx-auto mb-12 text-lg text-gray-300">
+          Explore the open-source code, contribute, and collaborate with developers worldwide.
+        </p>
+        <div className="flex flex-wrap justify-center gap-6">
+          <CTAButton href="https://github.com/devcapsule" primary>
+            <Github size={20} /> View on GitHub
+          </CTAButton>
+          <CTAButton href="https://github.com/devcapsule/blob/main/CONTRIBUTING.md" primary={false}>
+            <Users size={20} /> Contribute
+          </CTAButton>
+        </div>
+        <div className="mt-12 flex flex-wrap justify-center gap-12 text-gray-400">
+          <div className="flex items-center gap-2">
+            <Star className="text-yellow-400" /> 3.2k Stars
+          </div>
+          <div className="flex items-center gap-2">
+            <Users className="text-blue-400" /> 250 Contributors
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------- Technical Details -------------------- */}
+      <section className="py-20 px-6 text-center bg-gray-900">
+        <motion.h2
+          className="text-4xl font-bold mb-8"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          Technical Details
+        </motion.h2>
+        <p className="max-w-3xl mx-auto text-gray-400 mb-12">
+          Built with Node.js & React, lightweight DB support, and fully extensible via APIs and plugins.
+        </p>
+        <div className="max-w-5xl mx-auto flex flex-wrap justify-center gap-8">
+          <div className="p-6 bg-gray-800 rounded-xl shadow hover:shadow-lg transition">
+            <h3 className="font-semibold mb-2">Stack</h3>
+            <p>Node.js, React, TailwindCSS</p>
+          </div>
+          <div className="p-6 bg-gray-800 rounded-xl shadow hover:shadow-lg transition">
+            <h3 className="font-semibold mb-2">DB</h3>
+            <p>Lightweight JSON / SQLite support</p>
+          </div>
+          <div className="p-6 bg-gray-800 rounded-xl shadow hover:shadow-lg transition">
+            <h3 className="font-semibold mb-2">Deployment</h3>
+            <p>Docker-ready, serverless compatible</p>
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------- Footer -------------------- */}
+      <footer className="bg-gray-900 text-gray-400 py-8 text-center flex flex-col gap-3">
+        <div className="flex justify-center gap-6 flex-wrap">
+          <a href="https://github.com/devcapsule" target="_blank" className="hover:text-white">
+            GitHub
+          </a>
+          <a href="/docs" className="hover:text-white">
+            Documentation
+          </a>
+          <a href="/license" className="hover:text-white">
+            License
+          </a>
+          <a href="https://discord.gg/devcapsule" className="hover:text-white">
+            Discord
+          </a>
+          <a href="https://twitter.com/devcapsule" className="hover:text-white">
+            Twitter
+          </a>
+        </div>
+        <p className="text-sm">&copy; {new Date().getFullYear()} Dev Capsule. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
