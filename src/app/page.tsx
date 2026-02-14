@@ -13,7 +13,6 @@ type Phase = "upload" | "loading" | "results";
 export default function Home() {
   const [phase, setPhase] = useState<Phase>("upload");
   const [activeTab, setActiveTab] = useState("overview");
-  const [repoUrl, setRepoUrl] = useState<string>("");
   const [scanResults, setScanResults] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeAgentIdx, setActiveAgentIdx] = useState<number>(0);
@@ -29,10 +28,7 @@ export default function Home() {
     }, 2500);
 
     try {
-      const body = file
-        ? { fileName: file.name }
-        : { repoUrl: url };
-
+      const body = file ? { fileName: file.name } : { repoUrl: url };
       const res = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -58,7 +54,7 @@ export default function Home() {
     } catch (e) {
       console.error("Frontend orchestration error:", e);
       setError("Analysis failed. Multi-agent coordination interrupted.");
-      setPhase("results"); // do not revert to upload on backend success
+      setPhase("results");
     } finally {
       clearInterval(timer);
     }
@@ -74,13 +70,7 @@ export default function Home() {
       />
 
       <AnimatePresence mode="wait">
-        {phase === "upload" && (
-          <UploadPhase
-            repoUrl={repoUrl}
-            setRepoUrl={setRepoUrl}
-            performScan={performScan}
-          />
-        )}
+        {phase === "upload" && <UploadPhase performScan={performScan} />}
         {phase === "loading" && <LoadingPhase activeAgentIdx={activeAgentIdx} />}
         {phase === "results" && (
           <ResultsPhase
