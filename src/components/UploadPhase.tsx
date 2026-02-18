@@ -353,7 +353,7 @@ export default function DevCapsuleLanding({ performScan, securityScore }: DevCap
       <section className="relative py-6 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-blue-600/10 border-y border-blue-500/20">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
-            className="flex flex-wrap justify-center items-center gap-8 md:gap-12"
+            className="flex flex-wrap justify-center items-center gap-8 md:gap-12 text-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -361,34 +361,49 @@ export default function DevCapsuleLanding({ performScan, securityScore }: DevCap
             <div className="flex items-center gap-3">
               <Star className="text-yellow-400" size={24} />
               <div>
-                <div className="text-2xl font-bold text-white">3.2k+</div>
-                <div className="text-xs text-gray-400">GitHub Stars</div>
+                <div className="text-2xl font-bold text-white">0</div>
+                <div className="text-xs text-gray-400">GitHub Stars (Pre-Launch)</div>
               </div>
             </div>
+
             <div className="flex items-center gap-3">
               <Users className="text-blue-400" size={24} />
               <div>
-                <div className="text-2xl font-bold text-white">250+</div>
+                <div className="text-2xl font-bold text-white">0</div>
                 <div className="text-xs text-gray-400">Contributors</div>
               </div>
             </div>
+
             <div className="flex items-center gap-3">
               <TrendingUp className="text-green-400" size={24} />
               <div>
-                <div className="text-2xl font-bold text-white">10k+</div>
+                <div className="text-2xl font-bold text-white">0</div>
                 <div className="text-xs text-gray-400">Projects Scanned</div>
               </div>
             </div>
+
             <div className="flex items-center gap-3">
               <Gauge className="text-purple-400" size={24} />
               <div>
-                <div className="text-2xl font-bold text-white">99.9%</div>
-                <div className="text-xs text-gray-400">Uptime</div>
+                <div className="text-2xl font-bold text-white">—</div>
+                <div className="text-xs text-gray-400">Uptime (Not Yet Measured)</div>
               </div>
             </div>
           </motion.div>
+
+          {/* Optional Early Stage Note */}
+          <motion.div
+            className="mt-6 text-center text-sm text-gray-400"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            Dev Capsule is currently in early development. Metrics will appear as adoption grows.
+          </motion.div>
         </div>
       </section>
+
 
       {/* -------------------- Features Section (Enhanced) -------------------- */}
       <section className="relative py-24 px-6 bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800">
@@ -680,10 +695,10 @@ export default function DevCapsuleLanding({ performScan, securityScore }: DevCap
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <StatCard value="3.2k" label="Stars" icon={<Star size={20} className="text-yellow-400" />} />
-            <StatCard value="250" label="Contributors" icon={<Users size={20} className="text-blue-400" />} />
-            <StatCard value="1.5k" label="Forks" icon={<Github size={20} className="text-purple-400" />} />
-            <StatCard value="100+" label="Releases" icon={<TrendingUp size={20} className="text-green-400" />} />
+            <StatCard value="2" label="Stars" icon={<Star size={20} className="text-yellow-400" />} />
+            <StatCard value="2" label="Contributors" icon={<Users size={20} className="text-blue-400" />} />
+            <StatCard value="1" label="Forks" icon={<Github size={20} className="text-purple-400" />} />
+            <StatCard value="1+" label="Releases" icon={<TrendingUp size={20} className="text-green-400" />} />
           </motion.div>
         </div>
       </section>
