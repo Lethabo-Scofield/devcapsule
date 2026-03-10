@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+const MODEL_NAME = "gemini-2.5-flash-preview-04-17";
 const apiKey = process.env.GOOGLE_API_KEY;
 
 export async function POST(req: NextRequest) {
