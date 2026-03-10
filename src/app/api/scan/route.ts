@@ -5,6 +5,14 @@ const apiKey = process.env.GOOGLE_API_KEY;
 
 export async function POST(req: NextRequest) {
   try {
+    if (!apiKey) {
+      console.error("GOOGLE_API_KEY is not configured");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
     const { repoUrl } = await req.json();
 
     if (!repoUrl) {
@@ -62,7 +70,7 @@ export async function POST(req: NextRequest) {
     if (!textPart?.text) {
       console.error("Gemini raw response:", JSON.stringify(result, null, 2));
       return NextResponse.json(
-        { error: "Model returned no text output", raw: result },
+        { error: "Model returned no text output" },
         { status: 502 }
       );
     }
@@ -74,7 +82,7 @@ export async function POST(req: NextRequest) {
     } catch (err) {
       console.error("Failed to parse model JSON:", textPart.text, err);
       return NextResponse.json(
-        { error: "Model returned invalid JSON", raw: textPart.text },
+        { error: "Model returned invalid JSON" },
         { status: 502 }
       );
     }
