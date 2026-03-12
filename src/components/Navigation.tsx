@@ -39,8 +39,8 @@ export default function Navigation({
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
                                     className={`px-6 py-1.5 rounded-full text-[12px] font-bold uppercase tracking-widest transition-all ${activeTab === tab
-                                            ? "bg-white text-blue-600 shadow-sm"
-                                            : "text-gray-500 hover:text-black"
+                                        ? "bg-white text-blue-600 shadow-sm"
+                                        : "text-gray-500 hover:text-black"
                                         }`}
                                 >
                                     {tab}
@@ -52,7 +52,7 @@ export default function Navigation({
                     <div className="hidden md:flex items-center gap-4 text-gray-500">
                         <Workflow size={16} />
                         <a
-                            href="https://github.com"
+                            href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-black"
@@ -60,7 +60,7 @@ export default function Navigation({
                             <Github size={18} />
                         </a>
                         <a
-                            href="https://linkedin.com"
+                            href="https://www.linkedin.com/company/pineapple-labss/posts/?feedView=all"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-black"
@@ -89,8 +89,8 @@ export default function Navigation({
                                     setOpen(false);
                                 }}
                                 className={`w-full rounded-lg px-4 py-2 text-left text-sm font-bold uppercase ${activeTab === tab
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "text-gray-600"
+                                    ? "bg-blue-50 text-blue-600"
+                                    : "text-gray-600"
                                     }`}
                             >
                                 {tab}
@@ -99,14 +99,14 @@ export default function Navigation({
 
                         <div className="flex gap-4 pt-4 border-t border-gray-100">
                             <a
-                                href="https://github.com"
+                                href="https://github.com/Lethabo-Scofield/Dev-Time-Capsule.git"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
                                 <Github size={18} />
                             </a>
                             <a
-                                href="https://linkedin.com"
+                                href="https://www.linkedin.com/company/pineapple-labss/posts/?feedView=all"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
