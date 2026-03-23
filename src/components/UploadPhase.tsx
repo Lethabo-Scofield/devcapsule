@@ -685,7 +685,7 @@ export default function DevCapsuleLanding({ performScan, securityScore }: DevCap
                   </a>
                 </li>
                 <li>
-                  <a href="https://github.com/devcapsule" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors flex items-center gap-1">
+                  <a href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors flex items-center gap-1">
                     GitHub <ExternalLink size={12} />
                   </a>
                 </li>
