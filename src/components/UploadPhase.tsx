@@ -309,14 +309,14 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
           <div className="absolute inset-0 bg-white/60" />
         </div>
 
-        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center gap-10">
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center gap-6 sm:gap-10 pt-16 sm:pt-0">
           <motion.div
             className="flex flex-col items-center gap-5"
             variants={fadeUp}
             initial="hidden"
             animate="visible"
           >
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-center leading-[1.1] text-gray-900">
+            <h1 className="text-3xl sm:text-6xl font-bold tracking-tight text-center leading-[1.1] text-gray-900">
               Understand your
               <br />
               <span className="text-indigo-500">codebase deeply</span>
@@ -474,7 +474,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- How It Works ---- */}
-      <section className="relative py-32 px-6 bg-gray-50">
+      <section className="relative py-16 sm:py-32 px-4 sm:px-6 bg-gray-50">
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div
             className="text-center mb-20"
@@ -495,10 +495,10 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- Capabilities ---- */}
-      <section className="relative py-32 px-6 bg-white border-t border-gray-100">
+      <section className="relative py-16 sm:py-32 px-4 sm:px-6 bg-white border-t border-gray-100">
         <div className="max-w-5xl mx-auto">
           <motion.div
-            className="text-center mb-20"
+            className="text-center mb-10 sm:mb-20"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -553,7 +553,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- Demo Video ---- */}
-      <section className="relative py-32 px-6 bg-gray-50 border-t border-gray-100">
+      <section className="relative py-16 sm:py-32 px-4 sm:px-6 bg-gray-50 border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -604,7 +604,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- CTA ---- */}
-      <section className="relative py-32 px-6 bg-white border-t border-gray-100">
+      <section className="relative py-16 sm:py-32 px-4 sm:px-6 bg-white border-t border-gray-100">
         <div className="relative z-10 max-w-2xl mx-auto text-center">
           <motion.div
             variants={fadeUp}
@@ -650,8 +650,8 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
 
       {/* ---- Footer ---- */}
       <footer className="bg-[#0f172a]">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-14">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-14">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-3">
                 <img src="/favicon.ico" alt="Dev Capsule" className="w-6 h-6 rounded" />

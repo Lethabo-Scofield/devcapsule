@@ -26,19 +26,19 @@ export default function AnatomyTab({ scanResults }: any) {
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="max-w-6xl mx-auto px-6 py-16">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 pt-20 sm:pt-24">
 
                 {/* Header Section */}
-                <div className="mb-20 animate-fade-in text-center">
-                    <h1 className="text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
+                <div className="mb-12 sm:mb-20 animate-fade-in text-center">
+                    <h1 className="text-3xl sm:text-5xl font-semibold text-gray-900 mb-3 sm:mb-4 tracking-tight">
                         Project Architecture
                     </h1>
-                    <p className="text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto">
+                    <p className="text-base sm:text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto">
                         Visual representation of the main components and their hierarchy within the project
                     </p>
 
                     {/* Architecture Stats */}
-                    <div className="mt-8 flex items-center justify-center gap-6">
+                    <div className="mt-6 sm:mt-8 flex items-center justify-center gap-4 sm:gap-6">
                         <div className="flex items-center gap-2">
                             <Layers size={18} className="text-gray-400" />
                             <span className="text-sm text-gray-600 font-medium">
@@ -79,25 +79,26 @@ export default function AnatomyTab({ scanResults }: any) {
                                 </div>
 
                                 {/* Components in this tier */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
                                     {tierGroups[tier].map((comp: any, idx: number) => (
                                         <div
                                             key={idx}
-                                            className="group bg-white border-2 border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:border-gray-400 hover:shadow-2xl animate-scale-in"
+                                            className="group bg-white border-2 border-gray-200 rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:border-gray-400 hover:shadow-2xl animate-scale-in"
                                             style={{ animationDelay: `${tierIdx * 200 + idx * 100}ms` }}
                                         >
                                             {/* Component Icon */}
-                                            <div className="w-14 h-14 rounded-xl bg-gray-50 flex items-center justify-center mb-4 transition-all duration-300 group-hover:bg-gray-900 group-hover:scale-110">
-                                                <Box size={24} className="text-gray-400 group-hover:text-white transition-colors duration-300" />
+                                            <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-gray-50 flex items-center justify-center mb-3 sm:mb-4 transition-all duration-300 group-hover:bg-gray-900 group-hover:scale-110">
+                                                <Box size={20} className="text-gray-400 group-hover:text-white transition-colors duration-300 sm:hidden" />
+                                                <Box size={24} className="text-gray-400 group-hover:text-white transition-colors duration-300 hidden sm:block" />
                                             </div>
 
                                             {/* Component Name */}
-                                            <h4 className="text-xl font-semibold text-gray-900 mb-2">
+                                            <h4 className="text-base sm:text-xl font-semibold text-gray-900 mb-1.5 sm:mb-2">
                                                 {comp.name}
                                             </h4>
 
                                             {/* Component Purpose */}
-                                            <p className="text-gray-600 text-sm leading-relaxed">
+                                            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                                                 {comp.purpose}
                                             </p>
 
@@ -128,13 +129,13 @@ export default function AnatomyTab({ scanResults }: any) {
                 </div>
 
                 {/* Architecture Summary */}
-                <div className="mt-20 animate-fade-in">
-                    <div className="max-w-3xl mx-auto bg-gray-50 border-2 border-gray-200 rounded-2xl p-8">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <Layers size={20} />
+                <div className="mt-12 sm:mt-20 animate-fade-in">
+                    <div className="max-w-3xl mx-auto bg-gray-50 border-2 border-gray-200 rounded-2xl p-5 sm:p-8">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
+                            <Layers size={18} />
                             Architecture Overview
                         </h3>
-                        <p className="text-gray-600 leading-relaxed">
+                        <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                             This diagram shows the hierarchical structure of your project, organized by architectural tiers.
                             Each component serves a specific purpose within its layer, working together to create a cohesive system.
                         </p>

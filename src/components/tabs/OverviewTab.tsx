@@ -55,14 +55,14 @@ export default function OverviewTab({ scanResults, copiedId, setCopiedId }: any)
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="max-w-4xl mx-auto px-6 py-16">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 pt-20 sm:pt-24">
 
                 {/* Header Section */}
-                <div className="mb-16 animate-fade-in">
-                    <h1 className="text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
+                <div className="mb-10 sm:mb-16 animate-fade-in">
+                    <h1 className="text-3xl sm:text-5xl font-semibold text-gray-900 mb-3 sm:mb-4 tracking-tight">
                         Project Roadmap
                     </h1>
-                    <p className="text-lg text-gray-500 leading-relaxed max-w-2xl">
+                    <p className="text-base sm:text-lg text-gray-500 leading-relaxed max-w-2xl">
                         {scanResults.agents_reports.architect.summary}
                     </p>
                 </div>
@@ -72,17 +72,17 @@ export default function OverviewTab({ scanResults, copiedId, setCopiedId }: any)
                     {scanResults.agents_reports.dx.steps.map((step: any, idx: number) => (
                         <div
                             key={idx}
-                            className="group bg-white border border-gray-200 rounded-2xl p-8 transition-all duration-300 hover:border-gray-300 hover:shadow-lg animate-slide-up"
+                            className="group bg-white border border-gray-200 rounded-2xl p-4 sm:p-8 transition-all duration-300 hover:border-gray-300 hover:shadow-lg animate-slide-up"
                             style={{ animationDelay: `${idx * 100}ms` }}
                         >
                             {/* Step Header */}
-                            <div className="flex items-start gap-5 mb-4">
-                                <div className="flex-shrink-0 w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-gray-700 transition-all duration-300 group-hover:bg-gray-900 group-hover:text-white">
+                            <div className="flex items-start gap-3 sm:gap-5 mb-4">
+                                <div className="flex-shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-sm sm:text-base text-gray-700 transition-all duration-300 group-hover:bg-gray-900 group-hover:text-white">
                                     {idx + 1}
                                 </div>
-                                <div className="flex-1">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h3 className="text-xl font-semibold text-gray-900">
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-2">
+                                        <h3 className="text-base sm:text-xl font-semibold text-gray-900">
                                             {step.title}
                                         </h3>
                                         <span
@@ -94,7 +94,7 @@ export default function OverviewTab({ scanResults, copiedId, setCopiedId }: any)
                                             {step.priority}
                                         </span>
                                     </div>
-                                    <p className="text-gray-600 leading-relaxed">
+                                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                                         {step.desc}
                                     </p>
                                 </div>
@@ -102,10 +102,11 @@ export default function OverviewTab({ scanResults, copiedId, setCopiedId }: any)
 
                             {/* Command Section */}
                             {/* Command Section */}
-                            <div className="relative bg-[#020617] rounded-xl p-4 border border-[#0f172a] transition-all duration-300 group-hover:bg-[#020617]">
-                                <div className="flex items-center gap-3">
-                                    <Terminal size={18} className="text-green-400 flex-shrink-0" />
-                                    <code className="flex-1 text-sm font-mono text-green-400 overflow-x-auto">
+                            <div className="relative bg-[#020617] rounded-xl p-3 sm:p-4 border border-[#0f172a] transition-all duration-300 group-hover:bg-[#020617]">
+                                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                                    <Terminal size={16} className="text-green-400 flex-shrink-0 sm:hidden" />
+                                    <Terminal size={18} className="text-green-400 flex-shrink-0 hidden sm:block" />
+                                    <code className="flex-1 min-w-0 text-xs sm:text-sm font-mono text-green-400 overflow-x-auto whitespace-nowrap">
                                         {step.cmd}
                                     </code>
                                     <button

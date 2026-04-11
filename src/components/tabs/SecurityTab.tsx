@@ -75,32 +75,32 @@ export default function SecurityTab({ scanResults, copiedId, setCopiedId }: any)
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="max-w-4xl mx-auto px-6 py-16">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 pt-20 sm:pt-24">
                 {/* Stats Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 text-center transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
-                        <div className="text-3xl font-semibold text-gray-900 mb-1">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-8 sm:mb-12 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                    <div className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
+                        <div className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-1">
                             {vulnerabilities.length}
                         </div>
-                        <div className="text-xs text-gray-500 font-medium">Total Issues</div>
+                        <div className="text-[10px] sm:text-xs text-gray-500 font-medium">Total Issues</div>
                     </div>
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 text-center transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
-                        <div className="text-3xl font-semibold text-gray-900 mb-1">
+                    <div className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
+                        <div className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-1">
                             {criticalVulns.length}
                         </div>
-                        <div className="text-xs text-gray-500 font-medium">Critical</div>
+                        <div className="text-[10px] sm:text-xs text-gray-500 font-medium">Critical</div>
                     </div>
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 text-center transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
-                        <div className="text-3xl font-semibold text-gray-700 mb-1">
+                    <div className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
+                        <div className="text-2xl sm:text-3xl font-semibold text-gray-700 mb-1">
                             {highVulns.length}
                         </div>
-                        <div className="text-xs text-gray-500 font-medium">High</div>
+                        <div className="text-[10px] sm:text-xs text-gray-500 font-medium">High</div>
                     </div>
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 text-center transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
-                        <div className="text-3xl font-semibold text-gray-500 mb-1">
+                    <div className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center transition-all duration-300 hover:border-gray-300 hover:shadow-lg">
+                        <div className="text-2xl sm:text-3xl font-semibold text-gray-500 mb-1">
                             {mediumVulns.length + lowVulns.length}
                         </div>
-                        <div className="text-xs text-gray-500 font-medium">Other</div>
+                        <div className="text-[10px] sm:text-xs text-gray-500 font-medium">Other</div>
                     </div>
                 </div>
 
@@ -112,15 +112,15 @@ export default function SecurityTab({ scanResults, copiedId, setCopiedId }: any)
                         return (
                             <div
                                 key={idx}
-                                className="group bg-white border border-gray-200 rounded-2xl p-6 transition-all duration-500 hover:border-gray-300 hover:shadow-xl animate-slide-up"
+                                className="group bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 transition-all duration-500 hover:border-gray-300 hover:shadow-xl animate-slide-up"
                                 style={{ animationDelay: `${idx * 60 + 200}ms` }}
                             >
                                 {/* Header */}
-                                <div className="flex items-start gap-4 mb-5">
+                                <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
                                     {/* Icon */}
-                                    <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-white/80 backdrop-blur border border-gray-200/60 flex items-center justify-center transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-sm">
+                                    <div className="flex-shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-white/80 backdrop-blur border border-gray-200/60 flex items-center justify-center transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-sm">
                                         <Package
-                                            size={20}
+                                            size={18}
                                             className={severityColor}
                                             strokeWidth={1.4}
                                         />
@@ -128,17 +128,17 @@ export default function SecurityTab({ scanResults, copiedId, setCopiedId }: any)
 
                                     {/* Info */}
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3 mb-1.5">
-                                            <h3 className="text-[17px] font-semibold text-gray-900 tracking-tight truncate">
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1.5">
+                                            <h3 className="text-sm sm:text-[17px] font-semibold text-gray-900 tracking-tight truncate">
                                                 {vuln.pkg}
                                             </h3>
 
-                                            <span className="px-2.5 py-0.5 text-[11px] font-medium text-gray-700 bg-gray-100/80 rounded-full border border-gray-200/60">
+                                            <span className="px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] font-medium text-gray-700 bg-gray-100/80 rounded-full border border-gray-200/60">
                                                 {vuln.severity}
                                             </span>
                                         </div>
 
-                                        <p className="text-[13.5px] text-gray-600 leading-[1.6] line-clamp-2">
+                                        <p className="text-xs sm:text-[13.5px] text-gray-600 leading-[1.6] line-clamp-3 sm:line-clamp-2">
                                             {vuln.desc}
                                         </p>
                                     </div>
@@ -146,7 +146,7 @@ export default function SecurityTab({ scanResults, copiedId, setCopiedId }: any)
 
 
                                 {/* Fix Section */}
-                                <div className="space-y-3 pl-16">
+                                <div className="space-y-3 pl-0 sm:pl-16">
                                     {/* Divider */}
                                     <div className="border-t border-gray-100" />
 
@@ -157,10 +157,11 @@ export default function SecurityTab({ scanResults, copiedId, setCopiedId }: any)
                                     </div>
 
                                     {/* Command Box */}
-                                    <div className="relative bg-[#020617] rounded-xl p-4 border border-[#0f172a] transition-all duration-300 group-hover:bg-[#020617]">
-                                        <div className="flex items-center gap-3">
-                                            <Terminal size={16} className="text-green-400 flex-shrink-0" strokeWidth={2} />
-                                            <code className="flex-1 text-sm font-mono text-green-400 overflow-x-auto">
+                                    <div className="relative bg-[#020617] rounded-xl p-3 sm:p-4 border border-[#0f172a] transition-all duration-300 group-hover:bg-[#020617]">
+                                        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                                            <Terminal size={14} className="text-green-400 flex-shrink-0 sm:hidden" strokeWidth={2} />
+                                            <Terminal size={16} className="text-green-400 flex-shrink-0 hidden sm:block" strokeWidth={2} />
+                                            <code className="flex-1 min-w-0 text-xs sm:text-sm font-mono text-green-400 overflow-x-auto whitespace-nowrap">
                                                 {vuln.fix_command}
                                             </code>
                                             <button
@@ -184,14 +185,14 @@ export default function SecurityTab({ scanResults, copiedId, setCopiedId }: any)
                 </div>
 
                 {/* Bottom Info Card */}
-                <div className="mt-12 bg-gray-50 border border-gray-200 rounded-2xl p-8 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white border border-gray-200 mb-4">
-                        <CheckCircle2 size={24} className="text-gray-600" strokeWidth={1.5} />
+                <div className="mt-8 sm:mt-12 bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-8 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                    <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border border-gray-200 mb-3 sm:mb-4">
+                        <CheckCircle2 size={22} className="text-gray-600" strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                         Keep Your Project Secure
                     </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed max-w-xl mx-auto">
+                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-xl mx-auto">
                         Run these commands to update vulnerable packages. Address critical issues first,
                         then work through high and medium severity vulnerabilities.
                     </p>

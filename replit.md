@@ -58,3 +58,4 @@ public/                       # Static assets (hero-bg.png, HowItWorks.mp4)
 - Floating pill navbar with frosted glass effect on scroll
 - Hero section with background image overlay
 - Demo video with mute/unmute toggle
+- Fully mobile-responsive: all tabs (Overview, Security, Anatomy), loading phase, landing page sections (hero, How It Works, Capabilities, Demo, CTA), and footer use `sm:` breakpoints for consistent mobile-first layout

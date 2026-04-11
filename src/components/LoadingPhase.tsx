@@ -56,14 +56,14 @@ export default function LoadingPhase({ activeAgentIdx, logsFromBackend }: Props)
                 exit={{ opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="w-full max-w-xl flex flex-col items-start space-y-4">
-                    <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                <div className="w-full max-w-xl flex flex-col items-start space-y-4 px-4 sm:px-0">
+                    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
                         Audit in Progress
                     </h2>
 
                     <div
                         ref={containerRef}
-                        className="w-full h-80 overflow-y-auto bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm font-mono text-gray-700 space-y-2"
+                        className="w-full h-60 sm:h-80 overflow-y-auto bg-gray-50 border border-gray-200 rounded-xl p-3 sm:p-4 text-xs sm:text-sm font-mono text-gray-700 space-y-2"
                     >
                         {logs.map((log, i) => (
                             <motion.div
@@ -71,9 +71,9 @@ export default function LoadingPhase({ activeAgentIdx, logsFromBackend }: Props)
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3 }}
-                                className="flex items-center justify-between"
+                                className="flex items-center justify-between break-words min-w-0"
                             >
-                                <span>{log}</span>
+                                <span className="min-w-0 break-words">{log}</span>
                                 {i === logs.length - 1 && (
                                     <motion.span className="w-2 h-2 rounded-full bg-gray-400 animate-pulse" />
                                 )}
@@ -81,7 +81,7 @@ export default function LoadingPhase({ activeAgentIdx, logsFromBackend }: Props)
                         ))}
                     </div>
 
-                    <div className="text-gray-500 text-sm mt-2">
+                    <div className="text-gray-500 text-xs sm:text-sm mt-2">
                         {agent
                             ? `Currently processing: ${agent.name}`
                             : "Initializing agents..."}
