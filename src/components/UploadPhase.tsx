@@ -22,9 +22,12 @@ const scaleFade: Variants = {
 
 function LiveAgentDiagram({ agents }: { agents: { icon: React.ReactNode; name: string; desc: string }[] }) {
   const CYCLE = 8000;
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(-1);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    setStep(0);
     const interval = setInterval(() => {
       setStep((s) => (s + 1) % 6);
     }, CYCLE / 6);
@@ -70,36 +73,38 @@ function LiveAgentDiagram({ agents }: { agents: { icon: React.ReactNode; name: s
       <div className="hidden sm:block w-full max-w-lg h-16 pointer-events-none relative">
         <svg className="w-full h-full" viewBox="0 0 500 60" fill="none" preserveAspectRatio="xMidYMid meet">
           {[
-            { path: "M250 0 L80 55", idx: 0 },
-            { path: "M250 0 L250 55", idx: 1 },
-            { path: "M250 0 L420 55", idx: 2 },
-          ].map(({ path, idx }) => (
+            { path: "M250 0 L80 55", idx: 0, ex: 80, ey: 55 },
+            { path: "M250 0 L250 55", idx: 1, ex: 250, ey: 55 },
+            { path: "M250 0 L420 55", idx: 2, ex: 420, ey: 55 },
+          ].map(({ path, idx, ex, ey }) => (
             <g key={idx}>
               <path d={path} stroke="#e5e7eb" strokeWidth="1.5" />
-              <motion.circle
-                r="4"
-                fill={agentColors[idx]}
-                initial={{ opacity: 0, offsetDistance: "0%" }}
-                animate={
-                  step === idx + 1
-                    ? { offsetDistance: ["0%", "100%"], opacity: [0, 1, 1, 0] }
-                    : { opacity: 0, offsetDistance: "0%" }
-                }
-                transition={step === idx + 1 ? { duration: 1, ease: "easeInOut" } : { duration: 0.2 }}
-                style={{ offsetPath: `path("${path}")` }}
-              />
-              <motion.circle
-                r="3"
-                fill={agentColors[idx]}
-                initial={{ opacity: 0, offsetDistance: "0%" }}
-                animate={
-                  step === idx + 1
-                    ? { offsetDistance: ["0%", "100%"], opacity: [0, 0.6, 0.6, 0] }
-                    : { opacity: 0, offsetDistance: "0%" }
-                }
-                transition={step === idx + 1 ? { duration: 1, ease: "easeInOut", delay: 0.15 } : { duration: 0.2 }}
-                style={{ offsetPath: `path("${path}")` }}
-              />
+              {mounted && (
+                <>
+                  <motion.circle
+                    r="4"
+                    fill={agentColors[idx]}
+                    initial={{ cx: 250, cy: 0, opacity: 0 }}
+                    animate={
+                      step === idx + 1
+                        ? { cx: [250, ex], cy: [0, ey], opacity: [0, 1, 1, 0] }
+                        : { cx: 250, cy: 0, opacity: 0 }
+                    }
+                    transition={step === idx + 1 ? { duration: 1, ease: "easeInOut" } : { duration: 0.15 }}
+                  />
+                  <motion.circle
+                    r="3"
+                    fill={agentColors[idx]}
+                    initial={{ cx: 250, cy: 0, opacity: 0 }}
+                    animate={
+                      step === idx + 1
+                        ? { cx: [250, ex], cy: [0, ey], opacity: [0, 0.6, 0.6, 0] }
+                        : { cx: 250, cy: 0, opacity: 0 }
+                    }
+                    transition={step === idx + 1 ? { duration: 1, ease: "easeInOut", delay: 0.15 } : { duration: 0.15 }}
+                  />
+                </>
+              )}
             </g>
           ))}
         </svg>
@@ -236,10 +241,10 @@ function LiveAgentDiagram({ agents }: { agents: { icon: React.ReactNode; name: s
           className="flex flex-col items-center"
           animate={
             step >= 5
-              ? { scale: [0.8, 1.05, 1], opacity: [0, 1] }
+              ? { scale: 1, opacity: 1 }
               : { opacity: step >= 4 ? 0.4 : 0.2, scale: 0.95 }
           }
-          transition={step >= 5 ? { duration: 0.6, type: "spring", stiffness: 200 } : { duration: 0.3 }}
+          transition={step >= 5 ? { duration: 0.5, ease: "easeOut" } : { duration: 0.3 }}
         >
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500"
@@ -334,103 +339,153 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             </h1>
           </motion.div>
 
-          {/* ---- Tab Selector ---- */}
+          {/* ---- Prompt Card ---- */}
           <motion.div
-            className="w-full max-w-sm"
+            className="w-full max-w-xl"
             variants={fadeUp}
             initial="hidden"
             animate="visible"
             transition={{ delay: 0.1 }}
           >
-            <div className="relative flex bg-gray-100 rounded-lg p-0.5 border border-gray-200">
-              <motion.div
-                layout
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                className="absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-md bg-white shadow-sm"
-                style={{ left: activeTab === "repo" ? "2px" : "calc(50% + 2px)" }}
-              />
-              {tabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className="relative z-10 flex-1 py-2 text-sm font-medium flex items-center justify-center gap-2 text-gray-500 transition-colors hover:text-gray-900"
-                >
-                  {tab.icon}
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* ---- Input Area ---- */}
-          <AnimatePresence mode="wait">
-            {activeTab === "repo" ? (
-              <motion.div
-                key="repo"
-                className="w-full"
-                variants={scaleFade}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-              >
-                <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-3 shadow-sm focus-within:border-gray-400 transition-colors">
-                  <Github className="text-gray-300 shrink-0 ml-1" size={20} />
-                  <input
-                    value={repoUrl}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setRepoUrl(e.target.value)}
-                    placeholder="github.com/username/repo"
-                    className="flex-1 bg-transparent outline-none text-sm sm:text-base text-gray-900 placeholder-gray-300"
-                  />
-                  <motion.button
-                    onClick={() => performScan(repoUrl, null)}
-                    disabled={!repoUrl}
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="h-10 px-5 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            <div className="relative bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/80 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)] p-2">
+              {/* Tab pills inside card */}
+              <div className="flex gap-1 mb-2">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className="relative px-4 py-2 text-xs font-medium flex items-center gap-1.5 rounded-lg transition-all duration-200"
                   >
-                    Analyze
-                    <ArrowRight size={14} />
-                  </motion.button>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="file"
-                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={(e) => { e.preventDefault(); setDragging(false); setFile(e.dataTransfer.files[0]); }}
-                className={`w-full rounded-xl p-10 text-center transition-all border ${dragging
-                  ? "border-gray-400 bg-gray-50"
-                  : "border-gray-200 border-dashed bg-white/80"
-                  } shadow-sm`}
-                variants={scaleFade}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-              >
-                <UploadCloud className="mx-auto mb-3 text-gray-300" size={32} />
-                <p className="text-gray-600 text-sm font-medium">Drag and drop your archive</p>
-                <p className="text-xs text-gray-400 mt-1">ZIP, TAR, or GZ</p>
+                    {activeTab === tab.key && (
+                      <motion.div
+                        layoutId="activeTabBg"
+                        className="absolute inset-0 bg-gray-900 rounded-lg"
+                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                      />
+                    )}
+                    <span className={`relative z-10 transition-colors duration-200 ${activeTab === tab.key ? "text-white" : "text-gray-400 hover:text-gray-600"}`}>
+                      {tab.icon}
+                    </span>
+                    <span className={`relative z-10 transition-colors duration-200 ${activeTab === tab.key ? "text-white" : "text-gray-400 hover:text-gray-600"}`}>
+                      {tab.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
 
-                {file && (
-                  <motion.div className="mt-3 text-sm text-gray-700 font-medium" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    {file.name}
+              {/* Input area */}
+              <AnimatePresence mode="wait">
+                {activeTab === "repo" ? (
+                  <motion.div
+                    key="repo"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="relative group">
+                      <div className="flex items-center bg-white rounded-xl border border-gray-200/80 overflow-hidden transition-all duration-300 group-focus-within:border-indigo-300 group-focus-within:shadow-[0_0_0_3px_rgba(99,102,241,0.08)]">
+                        <div className="pl-4 pr-2 py-3.5">
+                          <Github className="text-gray-300 group-focus-within:text-indigo-400 transition-colors duration-200" size={18} />
+                        </div>
+                        <input
+                          value={repoUrl}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) => setRepoUrl(e.target.value)}
+                          placeholder="Paste a GitHub URL..."
+                          className="flex-1 bg-transparent outline-none text-sm text-gray-900 placeholder-gray-300 py-3.5 pr-2"
+                          onKeyDown={(e) => e.key === "Enter" && repoUrl && performScan(repoUrl, null)}
+                        />
+                        <div className="pr-2">
+                          <motion.button
+                            onClick={() => performScan(repoUrl, null)}
+                            disabled={!repoUrl}
+                            whileTap={{ scale: 0.94 }}
+                            className="h-9 w-9 rounded-lg bg-gray-900 hover:bg-indigo-600 text-white flex items-center justify-center transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-gray-900"
+                          >
+                            <ArrowRight size={16} />
+                          </motion.button>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-gray-300 text-center mt-2.5 tracking-wide">
+                      Press Enter or click the arrow to start analysis
+                    </p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="file"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.2 }}
+                    onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={(e) => { e.preventDefault(); setDragging(false); setFile(e.dataTransfer.files[0]); }}
+                  >
+                    <div className={`relative rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer ${
+                      dragging
+                        ? "border-indigo-400 bg-indigo-50/50"
+                        : file
+                        ? "border-emerald-300 bg-emerald-50/30"
+                        : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
+                    }`}>
+                      <label className="flex flex-col items-center py-8 cursor-pointer">
+                        <input
+                          type="file"
+                          accept=".zip,.tar,.gz,.tgz"
+                          className="hidden"
+                          onChange={(e) => e.target.files?.[0] && setFile(e.target.files[0])}
+                        />
+                        <motion.div
+                          animate={dragging ? { scale: 1.1, y: -4 } : { scale: 1, y: 0 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-colors duration-300 ${
+                            file ? "bg-emerald-100 text-emerald-500" : "bg-gray-100 text-gray-400"
+                          }`}>
+                            <UploadCloud size={22} />
+                          </div>
+                        </motion.div>
+                        {file ? (
+                          <motion.div
+                            className="text-center"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                          >
+                            <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                            <p className="text-xs text-emerald-500 mt-1">Ready to analyze</p>
+                          </motion.div>
+                        ) : (
+                          <div className="text-center">
+                            <p className="text-sm text-gray-500">
+                              <span className="font-medium text-gray-700">Click to browse</span> or drag & drop
+                            </p>
+                            <p className="text-xs text-gray-300 mt-1">ZIP, TAR, or GZ</p>
+                          </div>
+                        )}
+                      </label>
+                    </div>
+                    {file && (
+                      <motion.div
+                        className="mt-2 flex justify-center"
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <motion.button
+                          onClick={() => performScan("", file)}
+                          whileTap={{ scale: 0.96 }}
+                          className="h-10 px-6 rounded-xl bg-gray-900 hover:bg-indigo-600 text-white text-sm font-medium inline-flex items-center gap-2 transition-all duration-200"
+                        >
+                          Analyze
+                          <ArrowRight size={14} />
+                        </motion.button>
+                      </motion.div>
+                    )}
                   </motion.div>
                 )}
-
-                <motion.button
-                  onClick={() => performScan("", file)}
-                  disabled={!file}
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="mt-5 h-10 px-5 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium inline-flex items-center gap-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  Analyze
-                  <ArrowRight size={14} />
-                </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </AnimatePresence>
+            </div>
+          </motion.div>
         </div>
       </section>
 
