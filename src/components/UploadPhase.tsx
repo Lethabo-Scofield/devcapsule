@@ -180,9 +180,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
 
       {/* ---- How It Works ---- */}
       <section className="relative py-32 px-6 bg-gray-50">
-        <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent ml-[50%]" />
-
-        <div className="relative z-10 max-w-3xl mx-auto">
+        <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div
             className="text-center mb-20"
             variants={fadeUp}
@@ -196,26 +194,107 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             </h2>
           </motion.div>
 
-          <div className="space-y-16">
-            {agents.map((agent, i) => (
-              <motion.div
-                key={i}
-                className="flex gap-6 items-start"
-                initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-              >
-                <div className="shrink-0 w-12 h-12 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600">
-                  {agent.icon}
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{agent.name}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{agent.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {/* ---- Agent Diagram ---- */}
+          <motion.div
+            className="relative"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } },
+            }}
+          >
+            {/* Central orchestrator node */}
+            <motion.div
+              className="flex flex-col items-center mb-8"
+              variants={fadeUp}
+            >
+              <div className="w-16 h-16 rounded-2xl bg-gray-900 flex items-center justify-center shadow-lg shadow-gray-900/10">
+                <Cpu size={24} className="text-white" />
+              </div>
+              <p className="text-xs font-semibold text-gray-900 mt-3">Orchestrator</p>
+              <p className="text-[11px] text-gray-400">Coordinates all agents</p>
+            </motion.div>
+
+            {/* Connecting lines (SVG) */}
+            <div className="hidden sm:block absolute top-[88px] left-1/2 -translate-x-1/2 w-full max-w-lg h-16 pointer-events-none">
+              <svg className="w-full h-full" viewBox="0 0 500 60" fill="none" preserveAspectRatio="xMidYMid meet">
+                <motion.path
+                  d="M250 0 L80 55"
+                  stroke="#d1d5db"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                />
+                <motion.path
+                  d="M250 0 L250 55"
+                  stroke="#d1d5db"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                />
+                <motion.path
+                  d="M250 0 L420 55"
+                  stroke="#d1d5db"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                />
+              </svg>
+            </div>
+
+            {/* Agent cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:mt-16 mt-6">
+              {agents.map((agent, i) => (
+                <motion.div
+                  key={i}
+                  className="relative bg-white rounded-2xl border border-gray-200 p-6 text-center group hover:shadow-lg hover:shadow-gray-100 hover:border-gray-300 transition-all duration-300"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+                  }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                >
+                  <motion.div
+                    className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-600 mx-auto mb-4 group-hover:bg-gray-900 group-hover:text-white group-hover:border-gray-900 transition-all duration-300"
+                  >
+                    {agent.icon}
+                  </motion.div>
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">{agent.name}</h3>
+                  <p className="text-gray-400 text-xs leading-relaxed">{agent.desc}</p>
+
+                  {/* Pulse dot */}
+                  <div className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-gray-200 group-hover:bg-emerald-400 transition-colors duration-300">
+                    <div className="absolute inset-0 rounded-full bg-gray-200 group-hover:bg-emerald-400 group-hover:animate-ping transition-colors duration-300" />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Flow arrow to output */}
+            <motion.div
+              className="flex flex-col items-center mt-10"
+              variants={fadeUp}
+            >
+              <div className="w-px h-10 bg-gradient-to-b from-gray-200 to-gray-300" />
+              <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
+                <ArrowRight size={14} className="text-gray-400 rotate-90" />
+              </div>
+              <div className="mt-3 px-5 py-2 rounded-full bg-white border border-gray-200 shadow-sm">
+                <span className="text-xs font-medium text-gray-500">Full Security Report</span>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
