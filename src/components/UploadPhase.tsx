@@ -73,10 +73,6 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
               <br />
               <span className="text-gray-500">codebase deeply</span>
             </h1>
-
-            <p className="text-gray-400 text-base sm:text-lg text-center max-w-md leading-relaxed">
-              Three AI agents analyze your repository's architecture, security, and developer experience in seconds.
-            </p>
           </motion.div>
 
           {/* ---- Tab Selector ---- */}
