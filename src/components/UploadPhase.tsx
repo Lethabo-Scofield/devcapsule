@@ -610,26 +610,26 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- Footer ---- */}
-      <footer className="border-t border-gray-100 bg-white">
+      <footer className="bg-[#0f172a]">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-14">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-3">
                 <img src="/favicon.ico" alt="Dev Capsule" className="w-6 h-6 rounded" />
-                <span className="font-semibold text-gray-900 text-sm">Dev Capsule</span>
+                <span className="font-semibold text-white text-sm">Dev Capsule</span>
               </div>
-              <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+              <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
                 Open-source, AI-powered code analysis. Understand your repository's architecture, security, and developer experience.
               </p>
             </div>
 
             <div>
-              <h4 className="text-xs uppercase tracking-[0.15em] text-gray-900 font-semibold mb-4">Product</h4>
+              <h4 className="text-xs uppercase tracking-[0.15em] text-slate-300 font-semibold mb-4">Product</h4>
               <ul className="space-y-2.5 text-sm">
-                <li><a href="#features" className="text-gray-400 hover:text-gray-600 transition-colors">Features</a></li>
-                <li><a href="#demo" className="text-gray-400 hover:text-gray-600 transition-colors">Demo</a></li>
+                <li><a href="#features" className="text-slate-400 hover:text-white transition-colors">Features</a></li>
+                <li><a href="#demo" className="text-slate-400 hover:text-white transition-colors">Demo</a></li>
                 <li>
-                  <a href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">
+                  <a href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">
                     Source Code
                   </a>
                 </li>
@@ -637,16 +637,16 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             </div>
 
             <div>
-              <h4 className="text-xs uppercase tracking-[0.15em] text-gray-900 font-semibold mb-4">Connect</h4>
+              <h4 className="text-xs uppercase tracking-[0.15em] text-slate-300 font-semibold mb-4">Connect</h4>
               <ul className="space-y-2.5 text-sm">
                 <li>
-                  <a href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-2">
+                  <a href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2">
                     <Github size={14} />
                     GitHub
                   </a>
                 </li>
                 <li>
-                  <a href="https://www.linkedin.com/company/pineapple-labss/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-2">
+                  <a href="https://www.linkedin.com/company/pineapple-labss/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2">
                     <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
                     LinkedIn
                   </a>
@@ -655,11 +655,11 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             </div>
           </div>
 
-          <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-gray-300 text-xs">
+          <div className="pt-8 border-t border-slate-700/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-slate-500 text-xs">
               &copy; {new Date().getFullYear()} Dev Capsule. Built by Pineapplers Lab.
             </p>
-            <p className="text-gray-300 text-xs">
+            <p className="text-slate-500 text-xs">
               Open source under MIT License
             </p>
           </div>
