@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Github, UploadCloud, Terminal, Shield, Cpu, ArrowRight, Scan, GitBranch, Lock, Layers, Volume2, VolumeX } from "lucide-react";
+import { Github, UploadCloud, Terminal, Shield, Cpu, ArrowRight, Scan, GitBranch, Lock, Layers, Volume2, VolumeX, FileText } from "lucide-react";
 
 interface DevCapsuleLandingProps {
   performScan: (repoUrl: string, file: File | null) => void;
@@ -19,6 +19,265 @@ const scaleFade: Variants = {
   hidden: { opacity: 0, scale: 0.97 },
   visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
 };
+
+function LiveAgentDiagram({ agents }: { agents: { icon: React.ReactNode; name: string; desc: string }[] }) {
+  const CYCLE = 8000;
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep((s) => (s + 1) % 6);
+    }, CYCLE / 6);
+    return () => clearInterval(interval);
+  }, []);
+
+  const agentColors = ["#6366f1", "#10b981", "#f59e0b"];
+  const agentLabels = ["Analyzing architecture...", "Scanning vulnerabilities...", "Generating steps..."];
+
+  return (
+    <div className="relative flex flex-col items-center">
+      {/* Orchestrator */}
+      <motion.div
+        className="flex flex-col items-center mb-4"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          className="w-16 h-16 rounded-2xl bg-gray-900 flex items-center justify-center shadow-lg"
+          animate={step === 0 ? { scale: [1, 1.08, 1], boxShadow: ["0 0 0 0 rgba(99,102,241,0)", "0 0 20px 6px rgba(99,102,241,0.3)", "0 0 0 0 rgba(99,102,241,0)"] } : {}}
+          transition={{ duration: 1, ease: "easeInOut" }}
+        >
+          <Cpu size={24} className="text-white" />
+        </motion.div>
+        <p className="text-xs font-semibold text-gray-900 mt-3">Orchestrator</p>
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={step === 0 ? "dispatch" : "idle"}
+            className="text-[11px] text-gray-400 h-4"
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.25 }}
+          >
+            {step === 0 ? "Dispatching tasks..." : "Coordinating agents"}
+          </motion.p>
+        </AnimatePresence>
+      </motion.div>
+
+      {/* SVG lines + data particles */}
+      <div className="hidden sm:block w-full max-w-lg h-16 pointer-events-none relative">
+        <svg className="w-full h-full" viewBox="0 0 500 60" fill="none" preserveAspectRatio="xMidYMid meet">
+          {[
+            { path: "M250 0 L80 55", idx: 0 },
+            { path: "M250 0 L250 55", idx: 1 },
+            { path: "M250 0 L420 55", idx: 2 },
+          ].map(({ path, idx }) => (
+            <g key={idx}>
+              <path d={path} stroke="#e5e7eb" strokeWidth="1.5" />
+              <motion.circle
+                r="4"
+                fill={agentColors[idx]}
+                initial={{ opacity: 0, offsetDistance: "0%" }}
+                animate={
+                  step === idx + 1
+                    ? { offsetDistance: ["0%", "100%"], opacity: [0, 1, 1, 0] }
+                    : { opacity: 0, offsetDistance: "0%" }
+                }
+                transition={step === idx + 1 ? { duration: 1, ease: "easeInOut" } : { duration: 0.2 }}
+                style={{ offsetPath: `path("${path}")` }}
+              />
+              <motion.circle
+                r="3"
+                fill={agentColors[idx]}
+                initial={{ opacity: 0, offsetDistance: "0%" }}
+                animate={
+                  step === idx + 1
+                    ? { offsetDistance: ["0%", "100%"], opacity: [0, 0.6, 0.6, 0] }
+                    : { opacity: 0, offsetDistance: "0%" }
+                }
+                transition={step === idx + 1 ? { duration: 1, ease: "easeInOut", delay: 0.15 } : { duration: 0.2 }}
+                style={{ offsetPath: `path("${path}")` }}
+              />
+            </g>
+          ))}
+        </svg>
+      </div>
+
+      {/* Agent cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:mt-0 mt-4 w-full">
+        {agents.map((agent, i) => {
+          const isActive = step === i + 1;
+          const isDone = step > i + 1;
+          return (
+            <motion.div
+              key={i}
+              className="relative bg-white rounded-2xl border p-6 text-center transition-all duration-500"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              style={{
+                borderColor: isActive ? agentColors[i] : isDone ? "#d1d5db" : "#e5e7eb",
+                boxShadow: isActive ? `0 0 24px -4px ${agentColors[i]}33` : "none",
+              }}
+            >
+              <motion.div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 transition-all duration-500"
+                style={{
+                  backgroundColor: isActive ? agentColors[i] : isDone ? "#111827" : "#f9fafb",
+                  color: isActive || isDone ? "#ffffff" : "#6b7280",
+                  borderWidth: 1,
+                  borderColor: isActive ? agentColors[i] : isDone ? "#111827" : "#f3f4f6",
+                }}
+                animate={isActive ? { scale: [1, 1.1, 1] } : {}}
+                transition={isActive ? { duration: 0.8, repeat: Infinity, ease: "easeInOut" } : {}}
+              >
+                {agent.icon}
+              </motion.div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-1">{agent.name}</h3>
+
+              <AnimatePresence mode="wait">
+                {isActive ? (
+                  <motion.div
+                    key="thinking"
+                    className="flex items-center justify-center gap-2 h-5"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <span className="text-xs font-medium" style={{ color: agentColors[i] }}>
+                      {agentLabels[i]}
+                    </span>
+                    <span className="flex gap-0.5">
+                      {[0, 1, 2].map((d) => (
+                        <motion.span
+                          key={d}
+                          className="w-1 h-1 rounded-full"
+                          style={{ backgroundColor: agentColors[i] }}
+                          animate={{ opacity: [0.3, 1, 0.3] }}
+                          transition={{ duration: 0.8, repeat: Infinity, delay: d * 0.2 }}
+                        />
+                      ))}
+                    </span>
+                  </motion.div>
+                ) : isDone ? (
+                  <motion.p
+                    key="done"
+                    className="text-xs text-emerald-500 font-medium h-5 flex items-center justify-center gap-1"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, type: "spring" }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    Complete
+                  </motion.p>
+                ) : (
+                  <motion.p key="idle" className="text-gray-400 text-xs h-5 flex items-center justify-center">
+                    Waiting...
+                  </motion.p>
+                )}
+              </AnimatePresence>
+
+              {/* Status dot */}
+              <div
+                className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full transition-colors duration-500"
+                style={{
+                  backgroundColor: isActive ? agentColors[i] : isDone ? "#10b981" : "#e5e7eb",
+                }}
+              >
+                {isActive && (
+                  <motion.div
+                    className="absolute inset-0 rounded-full"
+                    style={{ backgroundColor: agentColors[i] }}
+                    animate={{ scale: [1, 2.2], opacity: [0.6, 0] }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "easeOut" }}
+                  />
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Flow to report */}
+      <div className="flex flex-col items-center mt-8">
+        <motion.div
+          className="w-px h-10 origin-top"
+          style={{ background: step >= 4 ? "linear-gradient(to bottom, #d1d5db, #6366f1)" : "linear-gradient(to bottom, #e5e7eb, #d1d5db)" }}
+          animate={step >= 4 ? { scaleY: [0, 1] } : {}}
+          transition={{ duration: 0.5 }}
+        />
+
+        {/* Converging particles */}
+        {step === 4 && (
+          <>
+            {agentColors.map((color, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 rounded-full"
+                style={{ backgroundColor: color }}
+                initial={{
+                  x: i === 0 ? -120 : i === 2 ? 120 : 0,
+                  y: 0,
+                  opacity: 0,
+                }}
+                animate={{ x: 0, y: 40, opacity: [0, 1, 1, 0] }}
+                transition={{ duration: 0.8, delay: i * 0.12, ease: "easeInOut" }}
+              />
+            ))}
+          </>
+        )}
+
+        {/* Report icon */}
+        <motion.div
+          className="flex flex-col items-center"
+          animate={
+            step >= 5
+              ? { scale: [0.8, 1.05, 1], opacity: [0, 1] }
+              : { opacity: step >= 4 ? 0.4 : 0.2, scale: 0.95 }
+          }
+          transition={step >= 5 ? { duration: 0.6, type: "spring", stiffness: 200 } : { duration: 0.3 }}
+        >
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500"
+            style={{
+              backgroundColor: step >= 5 ? "#6366f1" : "#f3f4f6",
+              color: step >= 5 ? "#ffffff" : "#9ca3af",
+              boxShadow: step >= 5 ? "0 0 30px -4px rgba(99,102,241,0.4)" : "none",
+            }}
+          >
+            <FileText size={22} />
+          </div>
+          <AnimatePresence mode="wait">
+            {step >= 5 ? (
+              <motion.div
+                key="ready"
+                className="mt-3 px-5 py-2 rounded-full bg-indigo-50 border border-indigo-200"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              >
+                <span className="text-xs font-semibold text-indigo-600">Report Ready</span>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="pending"
+                className="mt-3 px-5 py-2 rounded-full bg-white border border-gray-200"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <span className="text-xs font-medium text-gray-400">Full Report</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
 
 export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("repo");
@@ -191,107 +450,8 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             </h2>
           </motion.div>
 
-          {/* ---- Agent Diagram ---- */}
-          <motion.div
-            className="relative"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } },
-            }}
-          >
-            {/* Central orchestrator node */}
-            <motion.div
-              className="flex flex-col items-center mb-8"
-              variants={fadeUp}
-            >
-              <div className="w-16 h-16 rounded-2xl bg-gray-900 flex items-center justify-center shadow-lg shadow-gray-900/10">
-                <Cpu size={24} className="text-white" />
-              </div>
-              <p className="text-xs font-semibold text-gray-900 mt-3">Orchestrator</p>
-              <p className="text-[11px] text-gray-400">Coordinates all agents</p>
-            </motion.div>
-
-            {/* Connecting lines (SVG) */}
-            <div className="hidden sm:block absolute top-[88px] left-1/2 -translate-x-1/2 w-full max-w-lg h-16 pointer-events-none">
-              <svg className="w-full h-full" viewBox="0 0 500 60" fill="none" preserveAspectRatio="xMidYMid meet">
-                <motion.path
-                  d="M250 0 L80 55"
-                  stroke="#d1d5db"
-                  strokeWidth="1.5"
-                  strokeDasharray="4 4"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                />
-                <motion.path
-                  d="M250 0 L250 55"
-                  stroke="#d1d5db"
-                  strokeWidth="1.5"
-                  strokeDasharray="4 4"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
-                />
-                <motion.path
-                  d="M250 0 L420 55"
-                  stroke="#d1d5db"
-                  strokeWidth="1.5"
-                  strokeDasharray="4 4"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                />
-              </svg>
-            </div>
-
-            {/* Agent cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:mt-16 mt-6">
-              {agents.map((agent, i) => (
-                <motion.div
-                  key={i}
-                  className="relative bg-white rounded-2xl border border-gray-200 p-6 text-center group hover:shadow-lg hover:shadow-gray-100 hover:border-gray-300 transition-all duration-300"
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-                  }}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                >
-                  <motion.div
-                    className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-600 mx-auto mb-4 group-hover:bg-gray-900 group-hover:text-white group-hover:border-gray-900 transition-all duration-300"
-                  >
-                    {agent.icon}
-                  </motion.div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-2">{agent.name}</h3>
-                  <p className="text-gray-400 text-xs leading-relaxed">{agent.desc}</p>
-
-                  {/* Pulse dot */}
-                  <div className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-gray-200 group-hover:bg-emerald-400 transition-colors duration-300">
-                    <div className="absolute inset-0 rounded-full bg-gray-200 group-hover:bg-emerald-400 group-hover:animate-ping transition-colors duration-300" />
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Flow arrow to output */}
-            <motion.div
-              className="flex flex-col items-center mt-10"
-              variants={fadeUp}
-            >
-              <div className="w-px h-10 bg-gradient-to-b from-gray-200 to-gray-300" />
-              <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
-                <ArrowRight size={14} className="text-gray-400 rotate-90" />
-              </div>
-              <div className="mt-3 px-5 py-2 rounded-full bg-white border border-gray-200 shadow-sm">
-                <span className="text-xs font-medium text-gray-500">Full Security Report</span>
-              </div>
-            </motion.div>
-          </motion.div>
+          {/* ---- Live Agent Diagram ---- */}
+          <LiveAgentDiagram agents={agents} />
         </div>
       </section>
 
