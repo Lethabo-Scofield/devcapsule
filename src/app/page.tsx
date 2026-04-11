@@ -37,19 +37,15 @@ export default function Home() {
 
       const data = await res.json();
 
-      if (!data?.content) {
-        throw new Error("Empty model response");
+      if (data?.error) {
+        throw new Error(data.error);
       }
 
-      let parsed;
-      try {
-        parsed = JSON.parse(data.content);
-      } catch (e) {
-        console.error("Model returned invalid JSON:", data.content);
-        throw new Error("Invalid JSON from model");
+      if (!data?.metadata || !data?.agents_reports) {
+        throw new Error("Invalid response from scan");
       }
 
-      setScanResults(parsed);
+      setScanResults(data);
       setPhase("results");
     } catch (e) {
       console.error("Frontend orchestration error:", e);
