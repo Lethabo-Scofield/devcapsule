@@ -17,10 +17,12 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [activeAgentIdx, setActiveAgentIdx] = useState<number>(0);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [scanUrl, setScanUrl] = useState<string>("");
 
   const performScan = async (url: string, file: File | null = null) => {
     setError(null);
     setScanResults(null);
+    setScanUrl(url);
     setPhase("loading");
     setActiveAgentIdx(0);
 
@@ -68,7 +70,7 @@ export default function Home() {
 
       <AnimatePresence mode="wait">
         {phase === "upload" && <UploadPhase performScan={performScan} />}
-        {phase === "loading" && <LoadingPhase activeAgentIdx={activeAgentIdx} />}
+        {phase === "loading" && <LoadingPhase activeAgentIdx={activeAgentIdx} repoUrl={scanUrl} />}
         {phase === "results" && (
           <ResultsPhase
             activeTab={activeTab}
