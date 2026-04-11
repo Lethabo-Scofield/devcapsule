@@ -43,19 +43,40 @@ export async function orchestrateScan(repoUrl: string): Promise<ScanResult> {
   console.log(`[Orchestrator] Found ${repoData.fileTree.length} files in ${repoData.owner}/${repoData.repo}`);
 
   console.log("[Orchestrator] Launching Architect and Security agents in parallel...");
+
+  let architectFailed = false;
+  let securityFailed = false;
+  let agentError = "";
+
   const [architectReport, securityReport] = await Promise.all([
     runArchitectAgent(repoData).catch((err) => {
       console.error("[Architect Agent] Failed:", err);
+      architectFailed = true;
+      agentError = err?.message || "Architect agent failed";
       return { stack: [], summary: "Analysis failed", components: [] };
     }),
     runSecurityAgent(repoData).catch((err) => {
       console.error("[Security Agent] Failed:", err);
-      return { vulnerabilities: [], scan_source: "failed" };
+      securityFailed = true;
+      if (!agentError) agentError = err?.message || "Security agent failed";
+      return { vulnerabilities: [], scan_source: "failed" as const };
     }),
   ]);
 
   console.log(`[Orchestrator] Architect found ${architectReport.stack.length} technologies`);
   console.log(`[Orchestrator] Security found ${securityReport.vulnerabilities.length} vulnerabilities via ${securityReport.scan_source}`);
+
+  if (architectFailed && securityFailed) {
+    const isQuotaExhausted = agentError.toLowerCase().includes("quota exhausted");
+    const isRateLimit = agentError.toLowerCase().includes("rate limit");
+    const friendlyMsg = isQuotaExhausted
+      ? agentError
+      : isRateLimit
+      ? "AI service rate limited. Please wait a minute and try again."
+      : "All analysis agents failed. Please try again.";
+    console.error(`[Orchestrator] All agents failed: ${agentError}`);
+    throw new Error(friendlyMsg);
+  }
 
   console.log("[Orchestrator] Launching DX agent with combined context...");
   const dxReport = await runDxAgent(repoData, securityReport.vulnerabilities).catch((err) => {

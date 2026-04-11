@@ -58,10 +58,11 @@ export async function POST(req: NextRequest) {
     console.log(`[API] Scan complete. Health: ${result.metadata.health}, Issues: ${result.metadata.issues}`);
 
     return NextResponse.json(result);
-  } catch (err) {
+  } catch (err: any) {
     console.error("[API] Route failure:", err);
+    const message = err?.message || "Multi-agent scan failed. Please try again.";
     return NextResponse.json(
-      { error: "Multi-agent scan failed. Please try again." },
+      { error: message },
       { status: 500 }
     );
   }
