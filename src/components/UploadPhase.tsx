@@ -54,7 +54,7 @@ function LiveAgentDiagram({ agents }: { agents: { icon: React.ReactNode; name: s
         >
           <Cpu size={24} className="text-white" />
         </motion.div>
-        <p className="text-xs font-semibold text-gray-900 mt-3">Orchestrator</p>
+        <p className="text-xs font-semibold text-gray-900 mt-3">Capsule Orchestrator</p>
         <AnimatePresence mode="wait">
           <motion.p
             key={step === 0 ? "dispatch" : "idle"}
