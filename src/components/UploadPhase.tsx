@@ -71,7 +71,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-center leading-[1.1] text-gray-900">
               Understand your
               <br />
-              <span className="text-gray-500">codebase deeply</span>
+              <span className="text-indigo-500">codebase deeply</span>
             </h1>
           </motion.div>
 
