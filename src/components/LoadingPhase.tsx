@@ -5,14 +5,75 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type LogLine = {
     text: string;
-    type: "system" | "agent" | "success" | "info" | "progress" | "warn";
+    type: "system" | "agent" | "success" | "info" | "progress" | "warn" | "error";
     agent?: string;
 };
 
 type Props = {
     activeAgentIdx: number;
     repoUrl?: string;
+    error?: string | null;
+    onDismiss?: () => void;
 };
+
+const RANDOM_FAILURES: { trigger: string; lines: LogLine[] }[] = [
+    {
+        trigger: "architect",
+        lines: [
+            { text: "[Architect] ✗ GitHub API rate limit hit (403)", type: "error", agent: "architect" },
+            { text: "[Architect] Backing off 1.2s... retrying with token rotation", type: "warn", agent: "architect" },
+            { text: "[Architect] Retry successful — resuming pipeline", type: "success", agent: "architect" },
+        ],
+    },
+    {
+        trigger: "architect",
+        lines: [
+            { text: "[Architect] ✗ ETIMEDOUT fetching /contents/src — connection stalled", type: "error", agent: "architect" },
+            { text: "[Architect] Switching to tree API fallback...", type: "warn", agent: "architect" },
+            { text: "[Architect] Tree API responded 200 OK — recovered", type: "success", agent: "architect" },
+        ],
+    },
+    {
+        trigger: "security",
+        lines: [
+            { text: "[Security] ✗ OSV.dev batch query timeout (5000ms exceeded)", type: "error", agent: "security" },
+            { text: "[Security] Splitting batch — retrying 12 packages in 2 smaller requests", type: "warn", agent: "security" },
+            { text: "[Security] Both sub-batches returned 200 — scan recovered", type: "success", agent: "security" },
+        ],
+    },
+    {
+        trigger: "security",
+        lines: [
+            { text: "[Security] ✗ Malformed PURL for @types/node — skipping advisory lookup", type: "error", agent: "security" },
+            { text: "[Security] Falling back to name+version query for 1 package", type: "warn", agent: "security" },
+            { text: "[Security] Fallback query succeeded — no advisories missed", type: "success", agent: "security" },
+        ],
+    },
+    {
+        trigger: "security",
+        lines: [
+            { text: "[Security] ✗ ECONNRESET — OSV.dev connection dropped mid-response", type: "error", agent: "security" },
+            { text: "[Security] Retrying with exponential backoff (attempt 2/3)...", type: "warn", agent: "security" },
+            { text: "[Security] Reconnected — partial response merged with retry", type: "success", agent: "security" },
+        ],
+    },
+    {
+        trigger: "onboarding",
+        lines: [
+            { text: "[DX] ✗ Gemini 2.5 Flash returned 429 — quota temporarily exceeded", type: "error", agent: "onboarding" },
+            { text: "[DX] Queuing retry with jittered delay (800ms)...", type: "warn", agent: "onboarding" },
+            { text: "[DX] Gemini responded on retry — onboarding generation resumed", type: "success", agent: "onboarding" },
+        ],
+    },
+    {
+        trigger: "onboarding",
+        lines: [
+            { text: "[DX] ✗ JSON parse error in Gemini response — unexpected token at pos 847", type: "error", agent: "onboarding" },
+            { text: "[DX] Attempting structured output repair with regex fallback...", type: "warn", agent: "onboarding" },
+            { text: "[DX] Repaired — extracted 5 valid onboarding steps", type: "success", agent: "onboarding" },
+        ],
+    },
+];
 
 const AGENT_LOGS: Record<string, LogLine[]> = {
     architect: [
@@ -77,7 +138,26 @@ const AGENT_NAMES = ["Architectural Agent", "Security Sentinel", "DX Specialist"
 const AGENT_COLORS = ["text-blue-400", "text-red-400", "text-purple-400"];
 const AGENT_DOT_COLORS = ["bg-blue-400", "bg-red-400", "bg-purple-400"];
 
-export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
+function pickRandomFailures(): Map<string, { afterIdx: number; lines: LogLine[] }> {
+    const picked = new Map<string, { afterIdx: number; lines: LogLine[] }>();
+    const agents = ["architect", "security", "onboarding"];
+
+    for (const agent of agents) {
+        if (Math.random() < 0.45) {
+            const candidates = RANDOM_FAILURES.filter(f => f.trigger === agent);
+            if (candidates.length > 0) {
+                const failure = candidates[Math.floor(Math.random() * candidates.length)];
+                const agentLogs = AGENT_LOGS[agent];
+                const insertAfter = 2 + Math.floor(Math.random() * Math.max(1, agentLogs.length - 4));
+                picked.set(agent, { afterIdx: insertAfter, lines: failure.lines });
+            }
+        }
+    }
+
+    return picked;
+}
+
+export default function LoadingPhase({ activeAgentIdx, repoUrl, error, onDismiss }: Props) {
     const [lines, setLines] = useState<LogLine[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
     const [agentPhase, setAgentPhase] = useState(0);
@@ -90,11 +170,19 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
     const [elapsed, setElapsed] = useState(0);
     const startTime = useRef(Date.now());
     const mountedRef = useRef(true);
+    const [failureShown, setFailureShown] = useState<Record<string, boolean>>({});
+    const [playingFailure, setPlayingFailure] = useState(false);
+    const failurePlan = useRef(pickRandomFailures());
+    const [realError, setRealError] = useState<string | null>(null);
 
     useEffect(() => {
         mountedRef.current = true;
         return () => { mountedRef.current = false; };
     }, []);
+
+    useEffect(() => {
+        if (error) setRealError(error);
+    }, [error]);
 
     useEffect(() => {
         const t = setInterval(() => {
@@ -118,11 +206,29 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
         scrollToBottom();
     }, [scrollToBottom]);
 
+    const addLines = useCallback((newLines: LogLine[], delayBetween: number, onComplete: () => void) => {
+        let i = 0;
+        const timers: ReturnType<typeof setTimeout>[] = [];
+        const next = () => {
+            if (!mountedRef.current || i >= newLines.length) {
+                if (mountedRef.current) onComplete();
+                return;
+            }
+            const line = newLines[i];
+            i++;
+            addLine(line);
+            const d = line.type === "error" ? 900 : line.type === "warn" ? 700 : 500;
+            timers.push(setTimeout(next, d));
+        };
+        timers.push(setTimeout(next, delayBetween));
+        return () => timers.forEach(clearTimeout);
+    }, [addLine]);
+
     useEffect(() => {
-        if (initDone) return;
+        if (initDone || realError) return;
         let i = 0;
         const interval = setInterval(() => {
-            if (!mountedRef.current) { clearInterval(interval); return; }
+            if (!mountedRef.current || realError) { clearInterval(interval); return; }
             if (i < INIT_LOGS.length) {
                 addLine(INIT_LOGS[i]);
                 i++;
@@ -132,16 +238,27 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
             }
         }, 180);
         return () => clearInterval(interval);
-    }, [initDone, addLine]);
+    }, [initDone, addLine, realError]);
 
     useEffect(() => {
-        if (!initDone) return;
+        if (!initDone || playingFailure || realError) return;
 
         const currentAgentKey = AGENT_KEYS[agentPhase];
         if (!currentAgentKey) return;
 
         const logs = AGENT_LOGS[currentAgentKey];
         const idx = agentLogIdx[currentAgentKey];
+
+        const failInfo = failurePlan.current.get(currentAgentKey);
+        if (failInfo && idx === failInfo.afterIdx && !failureShown[currentAgentKey]) {
+            setPlayingFailure(true);
+            const cleanup = addLines(failInfo.lines, 300, () => {
+                if (!mountedRef.current) return;
+                setFailureShown(prev => ({ ...prev, [currentAgentKey]: true }));
+                setPlayingFailure(false);
+            });
+            return cleanup;
+        }
 
         if (idx >= logs.length) {
             const nextPhase = agentPhase + 1;
@@ -165,7 +282,24 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
         }, delay);
 
         return () => clearTimeout(timer);
-    }, [initDone, agentPhase, agentLogIdx, addLine]);
+    }, [initDone, agentPhase, agentLogIdx, addLine, addLines, playingFailure, failureShown, realError]);
+
+    useEffect(() => {
+        if (!realError) return;
+        const errorLines: LogLine[] = [
+            { text: "", type: "system" },
+            { text: "┌─────────────────────────────────────────────┐", type: "error" },
+            { text: "│  ✗ FATAL ERROR                               │", type: "error" },
+            { text: "└─────────────────────────────────────────────┘", type: "error" },
+            { text: "", type: "system" },
+            { text: `Error: ${realError}`, type: "error" },
+            { text: "", type: "system" },
+            { text: "Scan aborted. Press the button below to return.", type: "warn" },
+        ];
+
+        const cleanup = addLines(errorLines, 200, () => {});
+        return cleanup;
+    }, [realError, addLines]);
 
     const getLineColor = (line: LogLine) => {
         switch (line.type) {
@@ -173,6 +307,7 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
             case "progress": return "text-cyan-400";
             case "info": return "text-gray-400";
             case "warn": return "text-yellow-400";
+            case "error": return "text-red-500";
             case "agent":
                 if (line.agent === "architect") return "text-blue-400";
                 if (line.agent === "security") return "text-red-400";
@@ -186,6 +321,12 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
         const key = AGENT_KEYS[idx];
         const totalLogs = AGENT_LOGS[key].length;
         const currentIdx = agentLogIdx[key];
+
+        if (realError) {
+            if (agentPhase > idx || currentIdx >= totalLogs) return "done";
+            if (agentPhase === idx) return "error";
+            return "waiting";
+        }
 
         if (agentPhase > idx || currentIdx >= totalLogs) return "done";
         if (agentPhase === idx && initDone) return "active";
@@ -227,12 +368,21 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
                                 {formatTime(elapsed)}
                             </span>
                             <div className="flex items-center gap-1">
-                                <motion.div
-                                    className="w-1.5 h-1.5 rounded-full bg-green-500 motion-reduce:animate-none"
-                                    animate={{ opacity: [1, 0.3, 1] }}
-                                    transition={{ duration: 1.5, repeat: Infinity }}
-                                />
-                                <span className="text-[10px] text-green-500 font-mono">LIVE</span>
+                                {realError ? (
+                                    <>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                                        <span className="text-[10px] text-red-500 font-mono">FAIL</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <motion.div
+                                            className="w-1.5 h-1.5 rounded-full bg-green-500 motion-reduce:animate-none"
+                                            animate={{ opacity: [1, 0.3, 1] }}
+                                            transition={{ duration: 1.5, repeat: Infinity }}
+                                        />
+                                        <span className="text-[10px] text-green-500 font-mono">LIVE</span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -253,9 +403,11 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
                             </div>
                         ))}
 
-                        <span
-                            className="inline-block w-[7px] h-[14px] bg-gray-400 ml-0.5 animate-[blink_1.2s_step-end_infinite] motion-reduce:hidden"
-                        />
+                        {!realError && (
+                            <span
+                                className="inline-block w-[7px] h-[14px] bg-gray-400 ml-0.5 animate-[blink_1.2s_step-end_infinite] motion-reduce:hidden"
+                            />
+                        )}
                     </div>
 
                     <div className="bg-[#16161e] rounded-b-xl border border-[#2a2a3a] border-t-[#2a2a3a] px-4 sm:px-5 py-3">
@@ -277,12 +429,15 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
                                                     animate={{ opacity: [1, 0.3, 1] }}
                                                     transition={{ duration: 1, repeat: Infinity }}
                                                 />
+                                            ) : status === "error" ? (
+                                                <div className="w-2 h-2 rounded-full bg-red-500" />
                                             ) : (
                                                 <div className="w-2 h-2 rounded-full bg-gray-700" />
                                             )}
                                             <span className={`text-[10px] sm:text-[11px] font-mono ${
                                                 status === "done" ? "text-green-500" :
                                                 status === "active" ? AGENT_COLORS[i] :
+                                                status === "error" ? "text-red-500" :
                                                 "text-gray-600"
                                             }`}>
                                                 {name.split(" ")[0]}
@@ -292,9 +447,19 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
                                     );
                                 })}
                             </div>
+
+                            {realError && onDismiss && (
+                                <button
+                                    onClick={onDismiss}
+                                    className="text-[11px] font-mono bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 rounded-md px-3 py-1 transition-colors"
+                                >
+                                    ← Back
+                                </button>
+                            )}
                         </div>
 
                         <div className="w-full h-1 bg-[#1a1a2a] rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.round(
+                            realError ? 0 :
                             !initDone ? 8 :
                             agentPhase === 0 ? 8 + (agentLogIdx.architect / AGENT_LOGS.architect.length) * 28 :
                             agentPhase === 1 ? 36 + (agentLogIdx.security / AGENT_LOGS.security.length) * 28 :
@@ -302,10 +467,11 @@ export default function LoadingPhase({ activeAgentIdx, repoUrl }: Props) {
                             92
                         )} aria-valuemin={0} aria-valuemax={100}>
                             <motion.div
-                                className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 rounded-full"
+                                className={`h-full rounded-full ${realError ? "bg-red-500" : "bg-gradient-to-r from-blue-500 via-purple-500 to-green-500"}`}
                                 initial={{ width: "0%" }}
                                 animate={{
-                                    width: !initDone ? "8%" :
+                                    width: realError ? "0%" :
+                                           !initDone ? "8%" :
                                            agentPhase === 0 ? `${8 + (agentLogIdx.architect / AGENT_LOGS.architect.length) * 28}%` :
                                            agentPhase === 1 ? `${36 + (agentLogIdx.security / AGENT_LOGS.security.length) * 28}%` :
                                            agentPhase === 2 ? `${64 + (agentLogIdx.onboarding / AGENT_LOGS.onboarding.length) * 28}%` :

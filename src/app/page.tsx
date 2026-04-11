@@ -48,15 +48,27 @@ export default function Home() {
         throw new Error("Invalid response from scan");
       }
 
+      const isSoftFail = data.metadata.scan_source === "failed"
+        && data.agents_reports.architect?.summary === "Analysis failed"
+        && data.agents_reports.architect?.stack?.length === 0;
+
+      if (isSoftFail) {
+        throw new Error("Could not analyze repository — it may be private, empty, or the URL is incorrect.");
+      }
+
       setScanResults(data);
       setPhase("results");
     } catch (e: any) {
       console.error("Frontend orchestration error:", e);
       setError(e?.message || "Analysis failed. Please try again.");
-      setPhase("upload");
     } finally {
       clearInterval(timer);
     }
+  };
+
+  const handleDismissError = () => {
+    setError(null);
+    setPhase("upload");
   };
 
   return (
@@ -70,7 +82,14 @@ export default function Home() {
 
       <AnimatePresence mode="wait">
         {phase === "upload" && <UploadPhase performScan={performScan} />}
-        {phase === "loading" && <LoadingPhase activeAgentIdx={activeAgentIdx} repoUrl={scanUrl} />}
+        {phase === "loading" && (
+          <LoadingPhase
+            activeAgentIdx={activeAgentIdx}
+            repoUrl={scanUrl}
+            error={error}
+            onDismiss={handleDismissError}
+          />
+        )}
         {phase === "results" && (
           <ResultsPhase
             activeTab={activeTab}
@@ -80,13 +99,6 @@ export default function Home() {
           />
         )}
       </AnimatePresence>
-
-      {error && phase === "upload" && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-[calc(100%-2rem)] bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-5 py-3 shadow-lg text-center animate-[fadeInUp_0.3s_ease-out]">
-          {error}
-          <style>{`@keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }`}</style>
-        </div>
-      )}
     </div>
   );
 }
