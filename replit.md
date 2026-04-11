@@ -1,40 +1,36 @@
-# Dev Capsule
+# Dev Capsule (Dev-Time-Capsule)
 
-A Next.js multi-agent security and architecture analysis platform. Users submit a GitHub repo URL and the app uses the Google Gemini API to analyze the repository's architecture, security vulnerabilities, and developer experience.
+AI-powered code analysis tool that provides deep insights into repositories using Google Gemini AI multi-agent orchestration.
 
-## Architecture
-
-- **Framework**: Next.js 16 (App Router, Turbopack)
-- **Runtime**: Node.js 20
-- **Styling**: Tailwind CSS v4
-- **Animation**: Framer Motion
-- **AI**: Google Gemini API (`gemini-2.5-flash-preview-09-2025`)
+## Tech Stack
+- **Frontend**: Next.js 16 (App Router) + TypeScript
+- **Styling**: Tailwind CSS 4, Framer Motion
+- **Icons**: Lucide React
+- **AI**: Google Gemini API (`gemini-2.5-flash`)
+- **Git/File Handling**: simple-git, tmp-promise, glob
 
 ## Project Structure
-
 ```
 src/
-  app/
-    api/scan/route.ts   - Server-side API route that calls Gemini
-    layout.tsx          - Root layout
-    page.tsx            - Main page with phase state machine (upload → loading → results)
-    globals.css
-    lib/clipboard.ts
-  agents/agents.tsx     - Agent definitions shown during loading phase
-  components/           - UI components (Navigation, UploadPhase, LoadingPhase, ResultsPhase, tabs/)
+├── agents/agents.tsx         # AI agent definitions (Architect, Security, DX)
+├── app/
+│   ├── api/scan/route.ts     # Backend API route for Gemini AI orchestration
+│   ├── layout.tsx            # Global layout
+│   ├── page.tsx              # Main page (upload → loading → results phases)
+│   └── lib/                  # Utilities
+├── components/
+│   ├── Navigation.tsx        # Header + tab switcher
+│   ├── UploadPhase.tsx       # Repo URL input
+│   ├── LoadingPhase.tsx      # Animated multi-agent progress
+│   ├── ResultsPhase.tsx      # Results display parent
+│   └── tabs/                 # OverviewTab, AnatomyTab, SecurityTab
+public/                       # Static assets
 ```
 
 ## Environment Variables
-
-- `GOOGLE_API_KEY` - Required. Google Gemini API key for repository analysis.
+- `GOOGLE_API_KEY` (secret) — Required for Gemini AI scan feature
 
 ## Running
-
-- Dev: `npm run dev` → runs on port 5000, bound to 0.0.0.0 (Replit compatible)
+- Dev: `npm run dev` (runs on port 5000)
 - Build: `npm run build`
-- Start: `npm run start` → runs on port 5000, bound to 0.0.0.0
-
-## Replit Migration Notes
-
-- Port changed from default (3000) to 5000, bound to `0.0.0.0` for Replit preview compatibility
-- Workflow: "Start application" runs `npm run dev`
+- Start: `npm start` (port 5000)
