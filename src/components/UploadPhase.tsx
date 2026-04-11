@@ -186,22 +186,6 @@ function LiveAgentDiagram({ agents }: { agents: { icon: React.ReactNode; name: s
                 )}
               </AnimatePresence>
 
-              {/* Status dot */}
-              <div
-                className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full transition-colors duration-500"
-                style={{
-                  backgroundColor: isActive ? agentColors[i] : isDone ? "#10b981" : "#e5e7eb",
-                }}
-              >
-                {isActive && (
-                  <motion.div
-                    className="absolute inset-0 rounded-full"
-                    style={{ backgroundColor: agentColors[i] }}
-                    animate={{ scale: [1, 2.2], opacity: [0.6, 0] }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "easeOut" }}
-                  />
-                )}
-              </div>
             </motion.div>
           );
         })}
