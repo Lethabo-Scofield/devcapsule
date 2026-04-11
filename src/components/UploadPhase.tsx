@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, ChangeEvent } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Github, UploadCloud, Terminal, Shield, Cpu, ArrowRight, Scan, GitBranch, Lock, Layers } from "lucide-react";
+import { Github, UploadCloud, Terminal, Shield, Cpu, ArrowRight, Scan, GitBranch, Lock, Layers, Volume2, VolumeX } from "lucide-react";
 
 interface DevCapsuleLandingProps {
   performScan: (repoUrl: string, file: File | null) => void;
@@ -26,6 +26,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
 
   const tabs: { key: TabKey; icon: React.ReactNode; label: string }[] = [
     { key: "repo", icon: <Github size={14} />, label: "Repository" },
@@ -385,7 +386,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
               src="/HowItWorks.mp4"
               autoPlay
               loop
-              muted
+              muted={isMuted}
               playsInline
               preload="auto"
             />
@@ -393,6 +394,16 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
               <div className="w-1.5 h-1.5 bg-gray-800 rounded-full animate-pulse" />
               <span className="text-gray-500">Live Demo</span>
             </div>
+            <button
+              onClick={() => {
+                setIsMuted(!isMuted);
+                if (videoRef.current) videoRef.current.muted = !isMuted;
+              }}
+              className="absolute bottom-3 right-3 w-9 h-9 rounded-lg bg-white/90 backdrop-blur-sm border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-white shadow-sm transition-all duration-200"
+              aria-label={isMuted ? "Unmute video" : "Mute video"}
+            >
+              {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            </button>
           </motion.div>
         </div>
       </section>
