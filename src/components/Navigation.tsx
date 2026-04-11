@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Github, Linkedin, Menu } from "lucide-react";
 import { useState } from "react";
 
@@ -19,9 +20,13 @@ export default function Navigation({
                         className="flex items-center gap-2.5 cursor-pointer"
                         onClick={() => setPhase("upload")}
                     >
-                        <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">DC</span>
-                        </div>
+                        <Image
+                            src="/favicon.ico"
+                            alt="Dev Capsule"
+                            width={28}
+                            height={28}
+                            className="rounded-lg"
+                        />
                         <span className="font-semibold text-sm tracking-tight text-neutral-200">
                             Dev Capsule
                         </span>
