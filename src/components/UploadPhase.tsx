@@ -67,11 +67,6 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             initial="hidden"
             animate="visible"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-white/80 backdrop-blur-sm text-xs text-gray-500 font-medium tracking-wide shadow-sm">
-              <div className="w-1.5 h-1.5 rounded-full bg-gray-800 animate-pulse" />
-              AI-Powered Code Analysis
-            </div>
-
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-center leading-[1.1] text-gray-900">
               Understand your
               <br />
@@ -79,7 +74,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             </h1>
 
             <p className="text-gray-400 text-base sm:text-lg text-center max-w-md leading-relaxed">
-              Three AI agents analyze your repository's architecture, security, and developer experience — in seconds.
+              Three AI agents analyze your repository's architecture, security, and developer experience in seconds.
             </p>
           </motion.div>
 
