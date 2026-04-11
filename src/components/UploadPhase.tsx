@@ -51,13 +51,13 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
   ];
 
   return (
-    <div className="font-sans text-neutral-100 bg-neutral-950 overflow-x-hidden">
+    <div className="font-sans text-gray-900 bg-white overflow-x-hidden scroll-smooth">
 
       {/* ---- Hero ---- */}
       <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0">
           <img src="/hero-bg.png" alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-neutral-950/75" />
+          <div className="absolute inset-0 bg-white/60" />
         </div>
 
         <div className="relative z-10 w-full max-w-2xl flex flex-col items-center gap-10">
@@ -67,18 +67,18 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             initial="hidden"
             animate="visible"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-800 bg-neutral-900/80 text-xs text-neutral-400 font-medium tracking-wide">
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-white/80 backdrop-blur-sm text-xs text-gray-500 font-medium tracking-wide shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-gray-800 animate-pulse" />
               AI-Powered Code Analysis
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-center leading-[1.1]">
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-center leading-[1.1] text-gray-900">
               Understand your
               <br />
-              <span className="bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent">codebase deeply</span>
+              <span className="text-gray-500">codebase deeply</span>
             </h1>
 
-            <p className="text-neutral-500 text-base sm:text-lg text-center max-w-md leading-relaxed">
+            <p className="text-gray-400 text-base sm:text-lg text-center max-w-md leading-relaxed">
               Three AI agents analyze your repository's architecture, security, and developer experience — in seconds.
             </p>
           </motion.div>
@@ -91,18 +91,18 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             animate="visible"
             transition={{ delay: 0.1 }}
           >
-            <div className="relative flex bg-neutral-900 rounded-lg p-0.5 border border-neutral-800">
+            <div className="relative flex bg-gray-100 rounded-lg p-0.5 border border-gray-200">
               <motion.div
                 layout
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                className="absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-md bg-neutral-800"
+                className="absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-md bg-white shadow-sm"
                 style={{ left: activeTab === "repo" ? "2px" : "calc(50% + 2px)" }}
               />
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className="relative z-10 flex-1 py-2 text-sm font-medium flex items-center justify-center gap-2 text-neutral-400 transition-colors hover:text-neutral-200"
+                  className="relative z-10 flex-1 py-2 text-sm font-medium flex items-center justify-center gap-2 text-gray-500 transition-colors hover:text-gray-900"
                 >
                   {tab.icon}
                   {tab.label}
@@ -122,20 +122,20 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
                 animate="visible"
                 exit="hidden"
               >
-                <div className="flex items-center gap-3 bg-neutral-900 border border-neutral-800 rounded-xl p-3 focus-within:border-indigo-500/50 transition-colors">
-                  <Github className="text-neutral-600 shrink-0 ml-1" size={20} />
+                <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-3 shadow-sm focus-within:border-gray-400 transition-colors">
+                  <Github className="text-gray-300 shrink-0 ml-1" size={20} />
                   <input
                     value={repoUrl}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setRepoUrl(e.target.value)}
                     placeholder="github.com/username/repo"
-                    className="flex-1 bg-transparent outline-none text-sm sm:text-base text-neutral-200 placeholder-neutral-600"
+                    className="flex-1 bg-transparent outline-none text-sm sm:text-base text-gray-900 placeholder-gray-300"
                   />
                   <motion.button
                     onClick={() => performScan(repoUrl, null)}
                     disabled={!repoUrl}
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.97 }}
-                    className="h-10 px-5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="h-10 px-5 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     Analyze
                     <ArrowRight size={14} />
@@ -149,20 +149,20 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
                 onDragLeave={() => setDragging(false)}
                 onDrop={(e) => { e.preventDefault(); setDragging(false); setFile(e.dataTransfer.files[0]); }}
                 className={`w-full rounded-xl p-10 text-center transition-all border ${dragging
-                  ? "border-indigo-500/50 bg-indigo-500/5"
-                  : "border-neutral-800 border-dashed bg-neutral-900/50"
-                  }`}
+                  ? "border-gray-400 bg-gray-50"
+                  : "border-gray-200 border-dashed bg-white/80"
+                  } shadow-sm`}
                 variants={scaleFade}
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
               >
-                <UploadCloud className="mx-auto mb-3 text-neutral-600" size={32} />
-                <p className="text-neutral-300 text-sm font-medium">Drag and drop your archive</p>
-                <p className="text-xs text-neutral-600 mt-1">ZIP, TAR, or GZ</p>
+                <UploadCloud className="mx-auto mb-3 text-gray-300" size={32} />
+                <p className="text-gray-600 text-sm font-medium">Drag and drop your archive</p>
+                <p className="text-xs text-gray-400 mt-1">ZIP, TAR, or GZ</p>
 
                 {file && (
-                  <motion.div className="mt-3 text-sm text-indigo-400" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <motion.div className="mt-3 text-sm text-gray-700 font-medium" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                     {file.name}
                   </motion.div>
                 )}
@@ -172,7 +172,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
                   disabled={!file}
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
-                  className="mt-5 h-10 px-5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium inline-flex items-center gap-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="mt-5 h-10 px-5 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium inline-flex items-center gap-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   Analyze
                   <ArrowRight size={14} />
@@ -184,9 +184,8 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- How It Works ---- */}
-      <section className="relative py-32 px-6">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-950 to-neutral-950" />
-        <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-neutral-800 to-transparent ml-[50%]" />
+      <section className="relative py-32 px-6 bg-gray-50">
+        <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent ml-[50%]" />
 
         <div className="relative z-10 max-w-3xl mx-auto">
           <motion.div
@@ -196,8 +195,8 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <p className="text-xs uppercase tracking-[0.2em] text-indigo-400 font-medium mb-4">How It Works</p>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+            <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-medium mb-4">How It Works</p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
               Three agents, one command
             </h2>
           </motion.div>
@@ -212,12 +211,12 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
-                <div className="shrink-0 w-12 h-12 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center text-indigo-400">
+                <div className="shrink-0 w-12 h-12 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600">
                   {agent.icon}
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-neutral-200 mb-1">{agent.name}</h3>
-                  <p className="text-neutral-500 text-sm leading-relaxed">{agent.desc}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{agent.name}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{agent.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -226,7 +225,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- Capabilities ---- */}
-      <section className="relative py-32 px-6 border-t border-neutral-900">
+      <section className="relative py-32 px-6 bg-white border-t border-gray-100">
         <div className="max-w-5xl mx-auto">
           <motion.div
             className="text-center mb-20"
@@ -235,13 +234,13 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <p className="text-xs uppercase tracking-[0.2em] text-indigo-400 font-medium mb-4">Capabilities</p>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+            <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-medium mb-4">Capabilities</p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
               Built for security-conscious teams
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-neutral-800/50 rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-gray-100 rounded-2xl overflow-hidden">
             {[
               {
                 icon: <Scan size={20} />,
@@ -266,17 +265,17 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             ].map((item, i) => (
               <motion.div
                 key={i}
-                className="bg-neutral-950 p-8 group"
+                className="bg-white p-8 group"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-30px" }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
               >
-                <div className="w-10 h-10 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-indigo-400 mb-4 group-hover:border-indigo-500/30 transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-500 mb-4 group-hover:border-gray-300 transition-colors">
                   {item.icon}
                 </div>
-                <h3 className="text-base font-semibold text-neutral-200 mb-2">{item.title}</h3>
-                <p className="text-neutral-500 text-sm leading-relaxed">{item.desc}</p>
+                <h3 className="text-base font-semibold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -284,7 +283,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- Demo Video ---- */}
-      <section className="relative py-32 px-6 border-t border-neutral-900">
+      <section className="relative py-32 px-6 bg-gray-50 border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -293,14 +292,14 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <p className="text-xs uppercase tracking-[0.2em] text-indigo-400 font-medium mb-4">See It In Action</p>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+            <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-medium mb-4">See It In Action</p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
               From URL to full report
             </h2>
           </motion.div>
 
           <motion.div
-            className="relative rounded-xl overflow-hidden border border-neutral-800"
+            className="relative rounded-xl overflow-hidden border border-gray-200 shadow-lg"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -316,18 +315,16 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
               playsInline
               preload="auto"
             />
-            <div className="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-sm px-3 py-1.5 rounded-md text-xs border border-neutral-800 flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse" />
-              <span className="text-neutral-400">Live Demo</span>
+            <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-md text-xs border border-gray-200 flex items-center gap-2 shadow-sm">
+              <div className="w-1.5 h-1.5 bg-gray-800 rounded-full animate-pulse" />
+              <span className="text-gray-500">Live Demo</span>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* ---- CTA ---- */}
-      <section className="relative py-32 px-6 border-t border-neutral-900">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(99,102,241,0.05)_0%,_transparent_60%)]" />
-
+      <section className="relative py-32 px-6 bg-white border-t border-gray-100">
         <div className="relative z-10 max-w-2xl mx-auto text-center">
           <motion.div
             variants={fadeUp}
@@ -335,10 +332,10 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mb-4">
               Open source, always free
             </h2>
-            <p className="text-neutral-500 text-base mb-10 max-w-md mx-auto leading-relaxed">
+            <p className="text-gray-400 text-base mb-10 max-w-md mx-auto leading-relaxed">
               Dev Capsule is built in the open. Explore the source, contribute, or just give it a star.
             </p>
           </motion.div>
@@ -354,7 +351,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
               href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium transition-colors"
             >
               <Github size={16} />
               View on GitHub
@@ -363,7 +360,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
               href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule?tab=contributing-ov-file"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 h-11 px-6 rounded-lg border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-2 h-11 px-6 rounded-lg border border-gray-200 hover:border-gray-300 text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
             >
               Contribute
             </a>
@@ -372,9 +369,9 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
       </section>
 
       {/* ---- Footer ---- */}
-      <footer className="border-t border-neutral-900 py-8 px-6">
+      <footer className="border-t border-gray-100 py-8 px-6 bg-gray-50">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-neutral-500 text-sm">
+          <div className="flex items-center gap-2 text-gray-400 text-sm">
             <Terminal size={14} />
             <span>&copy; {new Date().getFullYear()} Dev Capsule</span>
           </div>
@@ -383,7 +380,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
               href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-600 hover:text-neutral-400 transition-colors"
+              className="text-gray-300 hover:text-gray-500 transition-colors"
             >
               <Github size={16} />
             </a>
@@ -391,7 +388,7 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
               href="https://www.linkedin.com/company/pineapple-labss/posts/?feedView=all"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-600 hover:text-neutral-400 transition-colors"
+              className="text-gray-300 hover:text-gray-500 transition-colors"
             >
               <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
             </a>

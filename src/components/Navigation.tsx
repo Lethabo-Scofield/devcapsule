@@ -13,7 +13,7 @@ export default function Navigation({
     const [open, setOpen] = useState(false);
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-neutral-800/50 bg-neutral-950/80 backdrop-blur-xl">
+        <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-xl">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-14 items-center justify-between">
                     <div
@@ -27,20 +27,20 @@ export default function Navigation({
                             height={28}
                             className="rounded-lg"
                         />
-                        <span className="font-semibold text-sm tracking-tight text-neutral-200">
+                        <span className="font-semibold text-sm tracking-tight text-gray-900">
                             Dev Capsule
                         </span>
                     </div>
 
                     {phase === "results" && (
-                        <div className="hidden md:flex bg-neutral-900 p-0.5 rounded-lg border border-neutral-800">
+                        <div className="hidden md:flex bg-gray-100 p-0.5 rounded-lg border border-gray-200">
                             {["overview", "anatomy", "security"].map(tab => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
                                     className={`px-5 py-1.5 rounded-md text-xs font-medium uppercase tracking-wider transition-all ${activeTab === tab
-                                        ? "bg-neutral-800 text-indigo-400"
-                                        : "text-neutral-500 hover:text-neutral-300"
+                                        ? "bg-white text-gray-900 shadow-sm"
+                                        : "text-gray-400 hover:text-gray-600"
                                         }`}
                                 >
                                     {tab}
@@ -49,12 +49,12 @@ export default function Navigation({
                         </div>
                     )}
 
-                    <div className="hidden md:flex items-center gap-3 text-neutral-600">
+                    <div className="hidden md:flex items-center gap-3 text-gray-300">
                         <a
                             href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-neutral-400 transition-colors"
+                            className="hover:text-gray-600 transition-colors"
                         >
                             <Github size={16} />
                         </a>
@@ -62,7 +62,7 @@ export default function Navigation({
                             href="https://www.linkedin.com/company/pineapple-labss/posts/?feedView=all"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-neutral-400 transition-colors"
+                            className="hover:text-gray-600 transition-colors"
                         >
                             <Linkedin size={16} />
                         </a>
@@ -71,7 +71,7 @@ export default function Navigation({
                     {phase === "results" && (
                         <button
                             onClick={() => setOpen(!open)}
-                            className="md:hidden text-neutral-500"
+                            className="md:hidden text-gray-400"
                         >
                             <Menu size={20} />
                         </button>
@@ -80,7 +80,7 @@ export default function Navigation({
             </div>
 
             {open && phase === "results" && (
-                <div className="md:hidden border-t border-neutral-800 bg-neutral-950">
+                <div className="md:hidden border-t border-gray-100 bg-white">
                     <div className="flex flex-col gap-1 px-4 py-3">
                         {["overview", "anatomy", "security"].map(tab => (
                             <button
@@ -90,20 +90,20 @@ export default function Navigation({
                                     setOpen(false);
                                 }}
                                 className={`w-full rounded-lg px-4 py-2 text-left text-xs font-medium uppercase tracking-wider ${activeTab === tab
-                                    ? "bg-neutral-900 text-indigo-400"
-                                    : "text-neutral-500"
+                                    ? "bg-gray-50 text-gray-900"
+                                    : "text-gray-400"
                                     }`}
                             >
                                 {tab}
                             </button>
                         ))}
 
-                        <div className="flex gap-4 pt-3 border-t border-neutral-800 mt-2">
+                        <div className="flex gap-4 pt-3 border-t border-gray-100 mt-2">
                             <a
                                 href="https://github.com/Pineapplers-Lab/Dev-Time-Capsule"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-neutral-500 hover:text-neutral-300"
+                                className="text-gray-400 hover:text-gray-600"
                             >
                                 <Github size={16} />
                             </a>
@@ -111,7 +111,7 @@ export default function Navigation({
                                 href="https://www.linkedin.com/company/pineapple-labss/posts/?feedView=all"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-neutral-500 hover:text-neutral-300"
+                                className="text-gray-400 hover:text-gray-600"
                             >
                                 <Linkedin size={16} />
                             </a>

@@ -61,7 +61,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950">
+    <div className="min-h-screen bg-white">
       <Navigation
         phase={phase}
         activeTab={activeTab}
