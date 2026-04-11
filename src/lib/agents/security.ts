@@ -66,8 +66,21 @@ ${vulnSummary}
 Generate the structured vulnerability report with fix commands.`;
 
     const raw = await callLLM(systemPrompt, userPrompt);
-    const parsed = JSON.parse(raw);
-    return { vulnerabilities: parsed.vulnerabilities || [], scan_source: scanSource };
+    try {
+      const parsed = JSON.parse(raw);
+      return { vulnerabilities: parsed.vulnerabilities || [], scan_source: scanSource };
+    } catch {
+      console.error("[Security] Failed to parse LLM response for OSV vulns:", raw.slice(0, 300));
+      const fallbackVulns: SecurityVuln[] = osvVulns.map(v => ({
+        pkg: v.package_name,
+        cve: v.id,
+        severity: v.severity,
+        fix_command: `npm install ${v.package_name}@${v.fixed_version}`,
+        desc: v.summary,
+        osv_url: `https://osv.dev/vulnerability/${v.id}`,
+      }));
+      return { vulnerabilities: fallbackVulns, scan_source: scanSource };
+    }
   }
 
   const systemPrompt = `You are the SECURITY agent. No real vulnerabilities were found via OSV.dev scanning. Based on the repository info provided, do a best-effort analysis of potential security concerns.
@@ -96,6 +109,11 @@ Dependencies: ${deps}
 Analyze for potential security concerns.`;
 
   const raw = await callLLM(systemPrompt, userPrompt);
-  const parsed = JSON.parse(raw);
-  return { vulnerabilities: parsed.vulnerabilities || [], scan_source: scanSource || "ai-analysis" };
+  try {
+    const parsed = JSON.parse(raw);
+    return { vulnerabilities: parsed.vulnerabilities || [], scan_source: scanSource || "ai-analysis" };
+  } catch {
+    console.error("[Security] Failed to parse LLM response:", raw.slice(0, 300));
+    return { vulnerabilities: [], scan_source: "ai-analysis (parse error)" };
+  }
 }

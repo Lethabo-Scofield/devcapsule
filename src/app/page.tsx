@@ -20,6 +20,7 @@ export default function Home() {
 
   const performScan = async (url: string, file: File | null = null) => {
     setError(null);
+    setScanResults(null);
     setPhase("loading");
     setActiveAgentIdx(0);
 
@@ -47,10 +48,10 @@ export default function Home() {
 
       setScanResults(data);
       setPhase("results");
-    } catch (e) {
+    } catch (e: any) {
       console.error("Frontend orchestration error:", e);
-      setError("Analysis failed. Multi-agent coordination interrupted.");
-      setPhase("results");
+      setError(e?.message || "Analysis failed. Please try again.");
+      setPhase("upload");
     } finally {
       clearInterval(timer);
     }
@@ -78,7 +79,12 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {error && <p className="text-red-500 text-center mt-6">{error}</p>}
+      {error && phase === "upload" && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-[calc(100%-2rem)] bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-5 py-3 shadow-lg text-center animate-[fadeInUp_0.3s_ease-out]">
+          {error}
+          <style>{`@keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }`}</style>
+        </div>
+      )}
     </div>
   );
 }

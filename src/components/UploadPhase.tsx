@@ -276,6 +276,18 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
 
+  const isValidGithubUrl = (url: string) => {
+    const trimmed = url.trim();
+    return /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+/i.test(trimmed) ||
+           /^[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+$/.test(trimmed);
+  };
+
+  const handleScan = () => {
+    if (!repoUrl.trim()) return;
+    if (!isValidGithubUrl(repoUrl)) return;
+    performScan(repoUrl.trim(), null);
+  };
+
   const tabs: { key: TabKey; icon: React.ReactNode; label: string }[] = [
     { key: "repo", icon: <Github size={14} />, label: "Repository" },
     { key: "file", icon: <UploadCloud size={14} />, label: "Upload" },
@@ -377,12 +389,12 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
                           onChange={(e: ChangeEvent<HTMLInputElement>) => setRepoUrl(e.target.value)}
                           placeholder="Paste a GitHub URL..."
                           className="flex-1 bg-transparent outline-none text-sm text-gray-900 placeholder-gray-300 py-3.5 pr-2"
-                          onKeyDown={(e) => e.key === "Enter" && repoUrl && performScan(repoUrl, null)}
+                          onKeyDown={(e) => e.key === "Enter" && handleScan()}
                         />
                         <div className="pr-2">
                           <motion.button
-                            onClick={() => performScan(repoUrl, null)}
-                            disabled={!repoUrl}
+                            onClick={handleScan}
+                            disabled={!repoUrl.trim() || !isValidGithubUrl(repoUrl)}
                             whileTap={{ scale: 0.94 }}
                             className="h-9 w-9 rounded-lg bg-gray-900 hover:bg-indigo-600 text-white flex items-center justify-center transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-gray-900"
                           >
@@ -392,7 +404,9 @@ export default function DevCapsuleLanding({ performScan }: DevCapsuleLandingProp
                       </div>
                     </div>
                     <p className="text-[11px] text-gray-300 text-center mt-2.5 tracking-wide">
-                      Press Enter or click the arrow to start analysis
+                      {repoUrl.trim() && !isValidGithubUrl(repoUrl)
+                        ? "Enter a valid GitHub URL (e.g. github.com/owner/repo)"
+                        : "Press Enter or click the arrow to start analysis"}
                     </p>
                   </motion.div>
                 ) : (
