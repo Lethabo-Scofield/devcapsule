@@ -26,7 +26,7 @@ export async function runSecurityAgent(repo: RepoData): Promise<SecurityReport> 
       ...(repo.packageJson.devDependencies || {}),
     };
     if (Object.keys(allDeps).length > 0) {
-      osvVulns = await scanNpmDependencies(allDeps);
+      osvVulns = await scanNpmDependencies(allDeps, repo.packageLockJson);
       scanSource = "osv.dev (npm)";
     }
   }
